@@ -41,5 +41,32 @@ def test_run_forest_mk5(mock_incident):
         mock_incident.run_forest_mk5() 
         assert 'not set - run update params' in str(w[-1].message)
     
+    forest_mk5_params = {
+        'wrf': 3.5,
+        'fuel_load': 15,
+    }
+    mock_incident.update_params(forest_mk5_params)
+    mock_incident.run_forest_mk5()
+    assert 'fros_mk5' in mock_incident.df.columns.values
+
+def test_run_forest_vesta(mock_incident):
+    assert type(mock_incident) is fb.Incident
+
+    warnings.simplefilter('always') #catch all warnings always
+    with warnings.catch_warnings(record=True) as w:        
+        mock_incident.run_forest_vesta() 
+        assert 'not set - run update params' in str(w[-1].message)
+    
+    forest_vesta_params = {
+        'fhs_surf': 3.5,
+        'fhs_n_surf': 2,
+        'fuel_height_ns': 20
+    }
+    mock_incident.update_params(forest_vesta_params)
+    mock_incident.run_forest_vesta()
+    assert 'fros_vesta' in mock_incident.df.columns.values
+
+
+    
 
 

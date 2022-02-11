@@ -1,8 +1,12 @@
 from dataclasses import dataclass
 import warnings
 from pandas import DataFrame
-from src.firebehaviour import spreadmodels as fs
+# from src.firebehaviour import spreadmodels as fs
 # import spreadmodels as fs
+if __name__ == '__main__':
+    import spreadmodels as fs
+else:
+    from src.firebehaviour import spreadmodels as fs
 
 FIELDS_BASE = {
     'date_time': 'Date time',
@@ -61,11 +65,6 @@ class Incident(object):
             'wrf': self.wrf,
             'fuel_load': self.fuel_load,
         }
-        # if self.check_params(forest_mk5_params):
-        # for key, val in forest_mk5_params.items():
-        #     if not val:
-        #         warnings.warn(f'{key} not set - run update params')
-        #         return None
         if self.check_params(forest_mk5_params):
             self.df = fs.ros_forest_mk5(self.df, self.wrf, self.fuel_load)
 
@@ -93,21 +92,6 @@ class Incident(object):
                 warnings.warn(f'{key} not set - run update params')
                 return False
         return True
-
-# class FireDataFrame(DataFrame):
-#     def __init__(
-#         self, 
-#         fn: str, 
-#         fields: dict = FIELDS_BASE,
-#         header = 0,
-#         datetime_format = "%d/%m/%Y %H:%M",
-#     ):
-
-#         self.fields = fields
-        
-
-
-#         super().__init__()
 
 if __name__ == '__main__':
     pass

@@ -40,7 +40,7 @@ def ros_forest_vesta(
         df: DataFrame,
         fhs_surf: float,
         fhs_n_surf: float,
-        fuel_height_ns: float,
+        fuel_height_ns: float, #cm
     ) -> DataFrame:
     """Project Vesta Cheney et al 2012.
 

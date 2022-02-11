@@ -1,8 +1,12 @@
+from openpyxl import Workbook
 from pandas import DataFrame
 import pytest
 import warnings
 
 from src.firebehaviour import helpers
+from src.firebehaviour import firebehaviour as fb
+from src.firebehaviour import weather_data as wd
+
 
 def test_check_filepath():
     assert helpers.check_filepath('tests/.data/weather_gridded_in.csv') is True
@@ -19,3 +23,15 @@ def test_check_encoding():
     assert helpers.check_encoding('tests/.data/utf_8.csv') == 'UTF-8'    
     assert helpers.check_encoding('tests/.data/macintosh.csv') == 'UTF-8'    
     assert helpers.check_encoding('tests/.data/ms_dos.csv') == 'UTF-8'
+
+@pytest.fixture
+def mock_incident():
+    fn = 'tests/.data/weather_gridded_in.csv'
+    weather_df = wd.gridded_to_df(fn)
+    return fb.Incident(weather_df)
+
+
+def test_incident_to_calc(mock_incident):
+    fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
+    wb = helpers.incident_to_calc(mock_incident,fn)
+    assert type(wb) is Workbook
