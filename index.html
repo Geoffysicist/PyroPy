@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="None">
+  
+  <link rel="canonical" href="https://github.com/Geoffysicist/PyroPy/">
+  <link rel="shortcut icon" href="img/favicon.ico">
+  <title>PyroPy</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="assets/_mkdocstrings.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Home";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = "/Geoffysicist/PyroPy/";
+  </script>
+  
+  <script src="js/jquery-2.1.1.min.js" defer></script>
+  <script src="js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> PyroPy</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#modules">Modules</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#typical-use">Typical Use</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#fire-spread-models">Fire Spread Models</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#weather-data">Weather Data</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#base-weather-data-structure">Base weather data structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gridded-weather-data-structure">Gridded weather data structure</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="modules/">Modules</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="license/">Licence</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">PyroPy</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="pyropy">PyroPy</h1>
+<p>Analysis of fire spread and intensity.</p>
+<p>Uses weather data and model specific parameters to predict rate of spread and intensity of wildfires.</p>
+<h3 id="modules">Modules</h3>
+<ul>
+<li>firebehaviour: Defines the main <code>Incident</code> class and several auxillary dictionaries. An <code>Incident</code> stores data related to the incident including weather, parameters and model outputs.</li>
+<li>spreadmodels: fire spread model functions which can be called directly or by an <code>Incident</code>.</li>
+<li>weather_data: functions for reading, writing and transforming weather between various formats including Australian Bureau of Meteorology (BoM) Gridded Weather, BoM Observations (*.axf) and Amicus.</li>
+<li>helpers: various helper functions for file handling and data processing</li>
+</ul>
+<p>for more detailed information see <a href="modules/">modules</a></p>
+<h3 id="typical-use">Typical Use</h3>
+<pre><code class="language-python">from src.pyropy import firebehaviour as fb
+from src.pyropy import weather_data as wd
+
+if __name__ == '__main__':
+   #read the weather data into a pandas DataFrame
+   weather_fn = 'tests/.data/weather_gridded_in.csv'
+   weather_df = wd.gridded_to_df(weather_fn)
+
+   #create an Incident using the weather data
+   incident = fb.Incident(weather_df)
+
+   #add the parameters necessary to run the desired models
+   incident_params = {
+      #forest_mk5
+      'wrf': 3.5,
+      'fuel_load': 15,
+      #forest_vesta
+      'fhs_surf': 3.5,
+      'fhs_n_surf': 2,
+      'fuel_height_ns': 20
+   }
+   incident.update_params(incident_params)
+
+   #run the desired models
+   incident.run_forest_mk5()
+   incident.run_forest_vesta()
+
+   #output results
+   incident.print()
+</code></pre>
+<h2 id="fire-spread-models">Fire Spread Models</h2>
+<h2 id="weather-data">Weather Data</h2>
+<p>The weather data is read into a pandas dataframe from a <code>*.csv</code> file.
+The fire behaviour models require certain fields to be present in the weather data and these are mapped using dictionaries.
+There are several standard mappings included (see below), but for non-standard data users must create their own dictionary and supply that as an argument to the <code>weather_to_df</code> function. The mapping dictionary must contain the keys in the <code>FIELDS_BASE</code> dictionary as a minimum.</p>
+<p>There are functions to handle the standard data formats such as BOM gridded weather with mapping dictionaries already defined.</p>
+<pre><code class="language-python">gridded_to_df(fn)
+amicus_to_df(fn)
+df_to_gridded(fn)
+df_to_amicus(fn)
+</code></pre>
+<p>For example, if you are using BOM gridded weather data the you should run:</p>
+<pre><code class="language-python">df = gridded_to_df('your_file_path.csv')
+</code></pre>
+<h3 id="base-weather-data-structure"><code>Base</code> weather data structure</h3>
+<p>call the function <code>weather_to_df(fn)</code></p>
+<pre><code class="language-python">FIELDS_BASE = {
+    'date_time': 'Date time',
+    'temp': 'Air temperature (C)',
+    'humidity': 'Relative humidity (%)',
+    'wind_speed': '10 m wind speed (km/h)',
+    'wind_dir': 'Wind direction',
+    'wind_dir_cp': 'Wind direction',
+    'drought': 'Drought Factor',
+    'ffdi': 'FFDI',
+    'gfdi': 'GFDI',
+    'dewpoint': 'dew_temp',
+    'fuel_state': 'fuel_state',
+}
+</code></pre>
+<h3 id="gridded-weather-data-structure"><code>Gridded</code> weather data structure</h3>
+<p>call the function <code>gridded_to_df(fn)</code></p>
+<pre><code class="language-python">FIELDS_GRIDDED = {
+    'date': 'Local Date',
+    'time': 'Local Time',
+    'temp': 'Temp (C)',
+    'humidity': 'RH (%)',
+    'wind_dir': 'Wind Dir',
+    'wind_speed': 'Wind Speed (km/h)',
+    'drought': 'Drought Factor',
+    'ffdi': 'FFDI',
+    'gfdi': 'GFDI',
+}
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules/" class="btn btn-neutral float-right" title="Modules">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="modules/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme_extra.js" defer></script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.2.3
+Build Date UTC : 2022-02-12 07:13:57.234808+00:00
+-->
