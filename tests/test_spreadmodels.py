@@ -3,7 +3,7 @@ import pytest
 import warnings
 
 from src.pyropy import spreadmodels as fs
-from src.pyropy import weather_data as wd
+from src.pyropy import weatherdata as wd
 
 @pytest.fixture
 def mock_weather():

@@ -1,5 +1,5 @@
 from src.pyropy import firebehaviour as fb
-from src.pyropy import weather_data as wd
+from src.pyropy import weatherdata as wd
 
 if __name__ == '__main__':
    #read the weather data into a pandas DataFrame

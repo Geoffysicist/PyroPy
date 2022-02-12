@@ -1,5 +1,7 @@
 site_name: PyroPy
-site_url: https://github.com/Geoffysicist/PyroPy
+site_author: Geoffysicist
+site_url: http://geoffysicist.github.io/PyroPy/
+repo_url: https://github.com/Geoffysicist/PyroPy/
 
 nav:
   - Home: index.md
@@ -18,9 +20,9 @@ plugins:
         - import sys
         - sys.path.append('src')
         # uncomment the lines below when building
-        # - import shutil
-        # - shutil.copyfile('README.md', 'docs/index.md')
-        # - shutil.copyfile('LICENSE', 'docs/license.md')
+        - import shutil
+        - shutil.copyfile('README.md', 'docs/index.md')
+        - shutil.copyfile('LICENSE', 'docs/license.md')
         rendering:
           show_source: false
     #custom_templates: templates

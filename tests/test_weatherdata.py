@@ -2,7 +2,7 @@ from pandas import DataFrame
 import pytest
 import warnings
 
-from src.pyropy import weather_data as wd
+from src.pyropy import weatherdata as wd
 
 def test_weather_to_df():
     fn = 'tests/.data/weather_base_in.csv'

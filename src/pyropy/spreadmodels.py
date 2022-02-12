@@ -1,14 +1,34 @@
 """
-Fire Spread Models. 
-Unless otherwise indicated all equations numbers refer to:
-Cruz et al. 2015.
+Australian rate of spread models for wildfire and prescribed burns.
 
-agnostic to slope ATM. Use discretion when plotting.
-note Cruz et al. for large fires slope effect negligible
+Unless otherwise indicated all models have been taken from:
+Cruz, Miguel, James Gould, Martin Alexander, Lachie Mccaw, and Stuart Matthews. 
+(2015) A Guide to Rate of Fire Spread Models for Australian Vegetation, 
+CSIRO Land & Water and AFAC, Melbourne, Vic 125 pp. 
+
+Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.
+
+All spread models take a pandas weather dataframe and model specific 
+parmeters as arguments.
+
+The weather dataframe must include the following exact fields (column headings):
+```
+    date_time: a pandas datetime field
+    temp: Air temerature (°C)
+    humidity: Relative humidity (%)
+    wind_speed: 10 m wind speed (km/h)
+    wind_dir: Wind direction (°)
+```
+Ideally the weather dataframe should include a drought factor though this
+can be added as a parameter. TODO error checking for this!
+
+The `weather` module provides function for reading `*.csv` files into 
+dataframes from standard sources
 """
-# TODO 
-# add flame hight and intensity
-# flank ROS from length to breadth ratio
+
+# TODO:
+# - add flame hight and intensity
+# = flank ROS from length to breadth ratio
 
 import numpy as np
 from pandas import DataFrame, Series
@@ -18,17 +38,26 @@ def ros_forest_mk5(
         wrf: float, 
         fuel_load: float,
     ) -> DataFrame:
-    """McArthur 1973a Mk5 Forest Fire Danger Meter
+    """Predicts the FROS from McArthur 1973a Mk5 Forest Fire Danger Meter.
 
-    Params
+    Uses Eqn 5.27
+
+    Args:
+        df: a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
         wrf: wind reduction factor
         fuel_load: fine fule load t/ha
 
+    Returns:
+        a pandas dataframe including the fields `fros_mk5` the forward
+        rate of spread (km/h), `fros_dir` the direction of spread, and `ffdi`
+        the forest fire danger index.
+    
     TODO use leaflet 80 when FFDI < 12
     """
-    # ros_df = weather_df['date_time'].to_frame(name='date_time')
     ros_df = df.copy(deep=True)
     ros_df['fros_dir'] = spread_direction(df)
+    
     #TODO use BOM FFDI if supplied?
     ros_df['ffdi'] = get_FFDI(df, wrf)
 
@@ -83,23 +112,42 @@ def spread_direction(weather_df: DataFrame) -> DataFrame:
         weather_df['wind_dir'] - 180
     )
 
-def get_FFDI(weather_df: DataFrame, wind_red: int = 3, flank=False, DF=9) -> Series:
-    """Calculates FFDI from Eqn 5.19.
+def get_FFDI(df: DataFrame, wrf: int = 3, flank=False, DF=9) -> Series:
+    """Calculates FFDI.
+    
+    Uses Eqn 5.19.
 
-    if flank calculates the ffdi with wind speed = 0
+    If a drought factor (column heading = `drought`) is present in the weather
+    dataframe then this is used, otherwise a drought factor must be supplied or
+    the drought factor defaults to 9.
+
+    if `flank=True` the ffdi is calculated for a wind speed = 0
+
+    Args:
+        df: a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
+        wrf: a wind reduction factor
+        flank: if `flank=True` the ffdi is calculated for a wind speed = 0
+        DF: drought factor, this is only used if there is no `drought` in the weather
+
+    Returns:
+        a pandas Series that can be added to an existing Incident dataframe.
+
+    Raises:
+        no errors 
     """
     if flank:
         wind_speed = 0
     else:
-        wind_speed = weather_df['wind_speed']
+        wind_speed = df['wind_speed']
 
-    if not ('drought' in weather_df.columns): weather_df['drought'] = DF
+    if not ('drought' in df.columns): df['drought'] = DF
 
     ffdi = 2.0*np.exp(
-        -0.450 + 0.987*np.log(weather_df['drought'])
-        -0.0345*weather_df['humidity']
-        +0.0338*weather_df['temp']
-        +0.0234* wind_speed * 3 / wind_red #Tolhurst wind reduction
+        -0.450 + 0.987*np.log(df['drought'])
+        -0.0345*df['humidity']
+        +0.0338*df['temp']
+        +0.0234* wind_speed * 3 / wrf 
         )
     
     return np.round(ffdi, 1)

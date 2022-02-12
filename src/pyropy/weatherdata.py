@@ -15,10 +15,6 @@ FIELDS_BASE = {
     'wind_dir': 'Wind direction',
     'wind_dir_cp': 'Wind direction',
     'drought': 'Drought Factor',
-    'ffdi': 'FFDI',
-    'gfdi': 'GFDI',
-    'dewpoint': 'dew_temp',
-    'fuel_state': 'fuel_state',
 }
 
 FIELDS_GRIDDED = {

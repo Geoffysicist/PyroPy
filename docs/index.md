@@ -1,20 +1,24 @@
 # PyroPy
 Analysis of fire spread and intensity.
 
+Author: Geoffysicist
+
+Source code: [https://github.com/Geoffysicist/PyroPy](https://github.com/Geoffysicist/PyroPy)
+
 Uses weather data and model specific parameters to predict rate of spread and intensity of wildfires.
 
 ### Modules
- - firebehaviour: Defines the main `Incident` class and several auxillary dictionaries. An `Incident` stores data related to the incident including weather, parameters and model outputs.
+ - firebehaviour: Defines the main `Incident` class and several auxillary dictionaries. An `Incident` stores data related to the incident including weather, model parameters and model outputs.
  - spreadmodels: fire spread model functions which can be called directly or by an `Incident`.
- - weather_data: functions for reading, writing and transforming weather between various formats including Australian Bureau of Meteorology (BoM) Gridded Weather, BoM Observations (*.axf) and Amicus.
+ - weatherdata: functions for reading, writing and transforming weather between various formats including Australian Bureau of Meteorology (BoM) Gridded Weather, BoM Observations (*.axf) and Amicus.
  - helpers: various helper functions for file handling and data processing
 
 for more detailed information see [modules](modules.md)
 
 ### Typical Use
 ```python
-from src.pyropy import firebehaviour as fb
-from src.pyropy import weather_data as wd
+from pyropy import firebehaviour as fb
+from pyropy import weather_data as wd
 
 if __name__ == '__main__':
    #read the weather data into a pandas DataFrame
@@ -46,6 +50,15 @@ if __name__ == '__main__':
 
 
 ## Fire Spread Models
+Unless otherwise indicated all models have been taken from:
+> Cruz, Miguel, James Gould, Martin Alexander, Lachie Mccaw, and Stuart Matthews. 
+(2015) A Guide to Rate of Fire Spread Models for Australian Vegetation, 
+CSIRO Land & Water and AFAC, Melbourne, Vic 125 pp. 
+
+Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.
+
+All spread models take a pandas weather dataframe and model specific 
+parmeters as arguments.
 
 ## Weather Data
 The weather data is read into a pandas dataframe from a `*.csv` file.
@@ -74,12 +87,6 @@ FIELDS_BASE = {
     'humidity': 'Relative humidity (%)',
     'wind_speed': '10 m wind speed (km/h)',
     'wind_dir': 'Wind direction',
-    'wind_dir_cp': 'Wind direction',
-    'drought': 'Drought Factor',
-    'ffdi': 'FFDI',
-    'gfdi': 'GFDI',
-    'dewpoint': 'dew_temp',
-    'fuel_state': 'fuel_state',
 }
 ```
 
