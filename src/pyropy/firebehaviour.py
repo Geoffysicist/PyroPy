@@ -82,8 +82,9 @@ class Incident(object):
                 self.fuel_height_ns,
             )
 
-    def print_head(self):
-        print(self.df.head())
+    def print(self, head=False):
+        if head: print(self.df.head())
+        else: print(self.df)
 
     def check_params(self, params) -> bool:
         for key, val in params.items():

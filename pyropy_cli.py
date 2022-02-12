@@ -1,12 +1,15 @@
-from src.pyropy import helpers as h
 from src.pyropy import firebehaviour as fb
 from src.pyropy import weather_data as wd
-from openpyxl import Workbook, load_workbook
 
 if __name__ == '__main__':
+   #read the weather data into a pandas DataFrame
    weather_fn = 'tests/.data/weather_gridded_in.csv'
    weather_df = wd.gridded_to_df(weather_fn)
+
+   #create an Incident using the weather data
    incident = fb.Incident(weather_df)
+
+   #add the parameters necessary to run the desired models
    incident_params = {
       #forest_mk5
       'wrf': 3.5,
@@ -17,12 +20,10 @@ if __name__ == '__main__':
       'fuel_height_ns': 20
    }
    incident.update_params(incident_params)
+
+   #run the desired models
    incident.run_forest_mk5()
    incident.run_forest_vesta()
 
-   # fbcalc_fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
-   # wb = h.incident_to_calc(incident, fbcalc_fn)
-
-   # wb.save('temp.xlsm')
-
-   incident.print_head()
+   #output results
+   incident.print()
