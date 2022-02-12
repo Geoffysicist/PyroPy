@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://github.com/Geoffysicist/PyroPy/</loc>
+         <loc>http://geoffysicist.github.io/PyroPy/</loc>
          <lastmod>2022-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://github.com/Geoffysicist/PyroPy/_index/</loc>
+         <loc>http://geoffysicist.github.io/PyroPy/_index/</loc>
          <lastmod>2022-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://github.com/Geoffysicist/PyroPy/license/</loc>
+         <loc>http://geoffysicist.github.io/PyroPy/license/</loc>
          <lastmod>2022-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://github.com/Geoffysicist/PyroPy/modules/</loc>
+         <loc>http://geoffysicist.github.io/PyroPy/modules/</loc>
          <lastmod>2022-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
