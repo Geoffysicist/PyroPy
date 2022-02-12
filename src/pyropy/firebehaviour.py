@@ -34,6 +34,8 @@ FIELDS_GRIDDED = {
 }
 
 class Incident(object):
+    """The incident class.
+    """
     def __init__(self, weather_df: DataFrame):
         self.df = weather_df
         self.wrf = None
