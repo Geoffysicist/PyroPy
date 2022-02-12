@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 import warnings
 from pandas import DataFrame
-# from src.firebehaviour import spreadmodels as fs
-# import spreadmodels as fs
+
 if __name__ == '__main__':
     import spreadmodels as fs
 else:
-    from src.firebehaviour import spreadmodels as fs
+    from . import spreadmodels as fs
 
 FIELDS_BASE = {
     'date_time': 'Date time',

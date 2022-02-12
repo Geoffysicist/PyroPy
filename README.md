@@ -1,4 +1,4 @@
-# firebehaviour
+# PyroPy
 Analysis of fire spread and intensity
 
 ## Reading weather data
