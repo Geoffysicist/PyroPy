@@ -1,1 +1,31 @@
-site_name: My Docs
+site_name: PyroPy
+site_url: https://github.com/Geoffysicist/PyroPy
+
+nav:
+  - Home: index.md
+  - Modules: modules.md
+  - Licence: license.md
+
+theme: readthedocs
+
+plugins:
+- search
+- mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        setup_commands:
+        - import sys
+        - sys.path.append('src')
+        # uncomment the lines below when building
+        # - import shutil
+        # - shutil.copyfile('README.md', 'docs/index.md')
+        # - shutil.copyfile('LICENSE', 'docs/license.md')
+        rendering:
+          show_source: false
+    #custom_templates: templates
+    watch:
+      - src/pyropy
+
+
+

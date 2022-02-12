@@ -1,3 +1,0 @@
-import pydoc
-
-pdoc --http

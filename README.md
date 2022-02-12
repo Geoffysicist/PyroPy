@@ -1,5 +1,5 @@
 # PyroPy
-Analysis of fire spread and intensity
+Analysis of fire spread and intensity.
 
 Uses weather data and model specific parameters to predict rate of spread and intensity of wildfires.
 
@@ -8,6 +8,8 @@ Uses weather data and model specific parameters to predict rate of spread and in
  - spreadmodels: fire spread model functions which can be called directly or by an `Incident`.
  - weather_data: functions for reading, writing and transforming weather between various formats including Australian Bureau of Meteorology (BoM) Gridded Weather, BoM Observations (*.axf) and Amicus.
  - helpers: various helper functions for file handling and data processing
+
+for more detailed information see [modules](modules.md)
 
 ### Typical Use
 ```python
