@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="None">
-  
+  <meta name="author" content="Geoffysicist">
   <link rel="canonical" href="http://geoffysicist.github.io/PyroPy/">
   <link rel="shortcut icon" href="img/favicon.ico">
   <title>PyroPy</title>
@@ -99,6 +99,9 @@
     <li>Home</li>
     <li class="wy-breadcrumbs-aside">
       
+        <a href="https://github.com/Geoffysicist/PyroPy/edit/master/docs/index.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
     </li>
   </ul>
   
@@ -110,6 +113,8 @@
               
                 <h1 id="pyropy">PyroPy</h1>
 <p>Analysis of fire spread and intensity.</p>
+<p>Author: Geoffysicist</p>
+<p>Source code: <a href="https://github.com/Geoffysicist/PyroPy">https://github.com/Geoffysicist/PyroPy</a></p>
 <p>Uses weather data and model specific parameters to predict rate of spread and intensity of wildfires.</p>
 <h3 id="modules">Modules</h3>
 <ul>
@@ -151,6 +156,13 @@ if __name__ == '__main__':
    incident.print()
 </code></pre>
 <h2 id="fire-spread-models">Fire Spread Models</h2>
+<p>Unless otherwise indicated all models have been taken from:
+Cruz, Miguel, James Gould, Martin Alexander, Lachie Mccaw, and Stuart Matthews. 
+(2015) A Guide to Rate of Fire Spread Models for Australian Vegetation, 
+CSIRO Land &amp; Water and AFAC, Melbourne, Vic 125 pp. </p>
+<p>Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.</p>
+<p>All spread models take a pandas weather dataframe and model specific 
+parmeters as arguments.</p>
 <h2 id="weather-data">Weather Data</h2>
 <p>The weather data is read into a pandas dataframe from a <code>*.csv</code> file.
 The fire behaviour models require certain fields to be present in the weather data and these are mapped using dictionaries.
@@ -172,12 +184,6 @@ df_to_amicus(fn)
     'humidity': 'Relative humidity (%)',
     'wind_speed': '10 m wind speed (km/h)',
     'wind_dir': 'Wind direction',
-    'wind_dir_cp': 'Wind direction',
-    'drought': 'Drought Factor',
-    'ffdi': 'FFDI',
-    'gfdi': 'GFDI',
-    'dewpoint': 'dew_temp',
-    'fuel_state': 'fuel_state',
 }
 </code></pre>
 <h3 id="gridded-weather-data-structure"><code>Gridded</code> weather data structure</h3>
@@ -227,6 +233,10 @@ df_to_amicus(fn)
   <div class="rst-versions" role="note" aria-label="versions">
   <span class="rst-current-version" data-toggle="rst-current-version">
     
+        <span>
+          <a href="https://github.com/Geoffysicist/PyroPy/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
     
     
       <span><a href="modules/" style="color: #fcfcfc">Next &raquo;</a></span>
@@ -248,5 +258,5 @@ df_to_amicus(fn)
 
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2022-02-12 07:32:33.395209+00:00
+Build Date UTC : 2022-02-12 11:41:55.872718+00:00
 -->

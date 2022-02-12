@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  
+  <meta name="author" content="Geoffysicist">
   <link rel="canonical" href="http://geoffysicist.github.io/PyroPy/modules/">
   <link rel="shortcut icon" href="../img/favicon.ico">
   <title>Modules - PyroPy</title>
@@ -84,6 +84,9 @@
     
     <li>Modules</li>
     <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/Geoffysicist/PyroPy/edit/master/docs/modules.md"
+          class="icon icon-github"> Edit on GitHub</a>
       
     </li>
   </ul>
@@ -291,11 +294,25 @@ http://python-notes.curiousefficiency.org/en/latest/python3/text_file_processing
 
     <div class="doc doc-contents ">
 
-      <p>Fire Spread Models. 
-Unless otherwise indicated all equations numbers refer to:
-Cruz et al. 2015.</p>
-<p>agnostic to slope ATM. Use discretion when plotting.
-note Cruz et al. for large fires slope effect negligible</p>
+      <p>Australian rate of spread models for wildfire and prescribed burns.</p>
+<p>Unless otherwise indicated all models have been taken from:
+Cruz, Miguel, James Gould, Martin Alexander, Lachie Mccaw, and Stuart Matthews. 
+(2015) A Guide to Rate of Fire Spread Models for Australian Vegetation, 
+CSIRO Land &amp; Water and AFAC, Melbourne, Vic 125 pp. </p>
+<p>Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.</p>
+<p>All spread models take a pandas weather dataframe and model specific 
+parmeters as arguments.</p>
+<p>The weather dataframe must include the following exact fields (column headings):</p>
+<pre><code>    date_time: a pandas datetime field
+    temp: Air temerature (°C)
+    humidity: Relative humidity (%)
+    wind_speed: 10 m wind speed (km/h)
+    wind_dir: Wind direction (°)
+</code></pre>
+<p>Ideally the weather dataframe should include a drought factor though this
+can be added as a parameter. TODO error checking for this!</p>
+<p>The <code>weather</code> module provides function for reading <code>*.csv</code> files into 
+dataframes from standard sources</p>
 
 
 
@@ -313,16 +330,56 @@ note Cruz et al. for large fires slope effect negligible</p>
 
 
 <h3 id="pyropy.spreadmodels.get_FFDI" class="doc doc-heading">
-<code class="highlight language-python">get_FFDI(weather_df, wind_red=3, flank=False, DF=9)</code>
+<code class="highlight language-python">get_FFDI(df, wrf=3, flank=False, DF=9)</code>
 
 
 </h3>
 
     <div class="doc doc-contents ">
 
-      <p>Calculates FFDI from Eqn 5.19.</p>
-<p>if flank calculates the ffdi with wind speed = 0</p>
+      <p>Calculates FFDI.</p>
+<p>Uses Eqn 5.19.</p>
+<p>If a drought factor (column heading = <code>drought</code>) is present in the weather
+dataframe then this is used, otherwise a drought factor must be supplied or
+the drought factor defaults to 9.</p>
+<p>if <code>flank=True</code> the ffdi is calculated for a wind speed = 0</p>
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li><p><strong>df</strong> (<code>DataFrame</code>) – a pandas dataframe which must contain the specified the weather
+data. This can be an Incident dataframe (<code>Incident.df</code>)</p></li>
+            <li><p><strong>wrf</strong> (<code>int</code>) – a wind reduction factor</p></li>
+            <li><p><strong>flank</strong> – if <code>flank=True</code> the ffdi is calculated for a wind speed = 0</p></li>
+            <li><p><strong>DF</strong> – drought factor, this is only used if there is no <code>drought</code> in the weather</p></li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+    <th class="field-name">Returns:</th>
+    <td class="field-body">
+        <ul class="first simple">
+          <li><p><code>Series</code> – a pandas Series that can be added to an existing Incident dataframe.</p></li>
+        </ul>
+    </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
   </div>
@@ -341,11 +398,46 @@ note Cruz et al. for large fires slope effect negligible</p>
 
     <div class="doc doc-contents ">
 
-      <p>McArthur 1973a Mk5 Forest Fire Danger Meter</p>
-<p>Params
-    wrf: wind reduction factor
-    fuel_load: fine fule load t/ha</p>
-<p>TODO use leaflet 80 when FFDI &lt; 12</p>
+      <p>Predicts the FROS from McArthur 1973a Mk5 Forest Fire Danger Meter.</p>
+<p>Uses Eqn 5.27</p>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li><p><strong>df</strong> (<code>DataFrame</code>) – a pandas dataframe which must contain the specified the weather
+data. This can be an Incident dataframe (<code>Incident.df</code>)</p></li>
+            <li><p><strong>wrf</strong> (<code>float</code>) – wind reduction factor</p></li>
+            <li><p><strong>fuel_load</strong> (<code>float</code>) – fine fule load t/ha</p></li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+    <th class="field-name">Returns:</th>
+    <td class="field-body">
+        <ul class="first simple">
+          <li><p><code>DataFrame</code> – a pandas dataframe including the fields <code>fros_mk5</code> the forward
+rate of spread (km/h), <code>fros_dir</code> the direction of spread, and <code>ffdi</code>
+the forest fire danger index.</p></li>
+        </ul>
+    </td>
+    </tr>
+  </tbody>
+</table>      <p>TODO use leaflet 80 when FFDI &lt; 12</p>
 
     </div>
 
@@ -516,7 +608,7 @@ TestClass        </code>
 
 
 <h3 id="pyropy.weather_data.df_to_weather" class="doc doc-heading">
-<code class="highlight language-python">df_to_weather(df, fn, col_names={'date_time': 'Date time', 'temp': 'Air temperature (C)', 'humidity': 'Relative humidity (%)', 'wind_speed': '10 m wind speed (km/h)', 'wind_dir': 'Wind direction', 'wind_dir_cp': 'Wind direction', 'drought': 'Drought Factor', 'ffdi': 'FFDI', 'gfdi': 'GFDI', 'dewpoint': 'dew_temp', 'fuel_state': 'fuel_state'}, datetime_format='%Y%m%d %H:%M', encoding=None)</code>
+<code class="highlight language-python">df_to_weather(df, fn, col_names={'date_time': 'Date time', 'temp': 'Air temperature (C)', 'humidity': 'Relative humidity (%)', 'wind_speed': '10 m wind speed (km/h)', 'wind_dir': 'Wind direction', 'wind_dir_cp': 'Wind direction', 'drought': 'Drought Factor'}, datetime_format='%Y%m%d %H:%M', encoding=None)</code>
 
 
 </h3>
@@ -537,7 +629,7 @@ TestClass        </code>
 
 
 <h3 id="pyropy.weather_data.weather_to_df" class="doc doc-heading">
-<code class="highlight language-python">weather_to_df(fn, header=0, col_names={'date_time': 'Date time', 'temp': 'Air temperature (C)', 'humidity': 'Relative humidity (%)', 'wind_speed': '10 m wind speed (km/h)', 'wind_dir': 'Wind direction', 'wind_dir_cp': 'Wind direction', 'drought': 'Drought Factor', 'ffdi': 'FFDI', 'gfdi': 'GFDI', 'dewpoint': 'dew_temp', 'fuel_state': 'fuel_state'}, datetime_format='%d/%m/%Y %H:%M')</code>
+<code class="highlight language-python">weather_to_df(fn, header=0, col_names={'date_time': 'Date time', 'temp': 'Air temperature (C)', 'humidity': 'Relative humidity (%)', 'wind_speed': '10 m wind speed (km/h)', 'wind_dir': 'Wind direction', 'wind_dir_cp': 'Wind direction', 'drought': 'Drought Factor'}, datetime_format='%d/%m/%Y %H:%M')</code>
 
 
 </h3>
@@ -622,6 +714,10 @@ TestClass        </code>
 
   <div class="rst-versions" role="note" aria-label="versions">
   <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Geoffysicist/PyroPy/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
     
     
       <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
