@@ -3,9 +3,9 @@ from pandas import DataFrame
 import pytest
 import warnings
 
-from src.firebehaviour import helpers
-from src.firebehaviour import firebehaviour as fb
-from src.firebehaviour import weather_data as wd
+from src.pyropy import helpers
+from src.pyropy import firebehaviour as fb
+from src.pyropy import weather_data as wd
 
 
 def test_check_filepath():

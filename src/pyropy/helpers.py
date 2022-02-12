@@ -6,7 +6,7 @@ from openpyxl import Workbook, load_workbook
 if  __name__ == '__main__':
     from firebehaviour import Incident
 else:
-    from src.firebehaviour.firebehaviour import Incident
+    from .firebehaviour import Incident
 
 def check_filepath(fn: str, suffix: str = None) -> bool:
     valid = os.path.isfile(fn)

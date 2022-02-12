@@ -2,8 +2,8 @@ from pandas import DataFrame
 import pytest
 import warnings
 
-from src.firebehaviour import spreadmodels as fs
-from src.firebehaviour import weather_data as wd
+from src.pyropy import spreadmodels as fs
+from src.pyropy import weather_data as wd
 
 @pytest.fixture
 def mock_weather():
