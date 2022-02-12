@@ -1,6 +1,6 @@
-from src.firebehaviour import helpers as h
-from src.firebehaviour import firebehaviour as fb
-from src.firebehaviour import weather_data as wd
+from src.pyropy import helpers as h
+from src.pyropy import firebehaviour as fb
+from src.pyropy import weather_data as wd
 from openpyxl import Workbook, load_workbook
 
 if __name__ == '__main__':
