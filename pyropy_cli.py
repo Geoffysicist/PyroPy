@@ -9,21 +9,21 @@ if __name__ == '__main__':
    #create an Incident using the weather data
    incident = fb.Incident(weather_df)
 
-   #add the parameters necessary to run the desired models
-   incident_params = {
-      #forest_mk5
-      'wrf': 3.5,
-      'fuel_load': 15,
-      #forest_vesta
-      'fhs_surf': 3.5,
-      'fhs_n_surf': 2,
-      'fuel_height_ns': 20
-   }
-   incident.update_params(incident_params)
+   # #add the parameters necessary to run the desired models
+   # incident_params = {
+   #    #forest_mk5
+   #    'wrf': 3.5,
+   #    'fuel_load': 15,
+   #    #forest_vesta
+   #    'fhs_surf': 3.5,
+   #    'fhs_n_surf': 2,
+   #    'fuel_height_ns': 20
+   # }
+   # # incident.update_params(incident_params)
 
-   #run the desired models
-   incident.run_forest_mk5()
-   incident.run_forest_vesta()
+   # #run the desired models
+   # incident.run_forest_mk5()
+   # incident.run_forest_vesta()
 
-   #output results
-   incident.print()
+   # #output results
+   # incident.print()

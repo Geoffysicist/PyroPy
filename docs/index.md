@@ -7,18 +7,18 @@ Source code: [https://github.com/Geoffysicist/PyroPy](https://github.com/Geoffys
 
 Uses weather data and model specific parameters to predict rate of spread and intensity of wildfires.
 
-### Modules
+## Modules
  - firebehaviour: Defines the main `Incident` class and several auxillary dictionaries. An `Incident` stores data related to the incident including weather, model parameters and model outputs.
  - spreadmodels: fire spread model functions which can be called directly or by an `Incident`.
  - weatherdata: functions for reading, writing and transforming weather between various formats including Australian Bureau of Meteorology (BoM) Gridded Weather, BoM Observations (*.axf) and Amicus.
- - helpers: various helper functions for file handling and data processing
+
 
 for more detailed information see [modules](modules.md)
 
-### Typical Use
+## Typical Use
 ```python
 from pyropy import firebehaviour as fb
-from pyropy import weather_data as wd
+from pyropy import weatherdata as wd
 
 if __name__ == '__main__':
    #read the weather data into a pandas DataFrame
@@ -47,7 +47,6 @@ if __name__ == '__main__':
    #output results
    incident.print()
 ```
-
 
 ## Fire Spread Models
 Unless otherwise indicated all models have been taken from:

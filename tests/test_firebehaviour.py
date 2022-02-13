@@ -17,8 +17,14 @@ def test_incident(mock_weather):
 def mock_incident(mock_weather):
     return fb.Incident(mock_weather)
 
+def test_get_params(mock_incident):
+    mock_incident.wrf = 4
+    params = mock_incident.get_params()
+    assert type(params) is dict
+    assert params['wrf'] == 4
+
+
 def test_update_params(mock_incident):
-    assert type(mock_incident) is fb.Incident
     assert mock_incident.wrf is None
     params = {
             'wrf': 3,
