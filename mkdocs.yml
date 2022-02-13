@@ -4,13 +4,29 @@ site_url: http://geoffysicist.github.io/PyroPy/
 repo_url: https://github.com/Geoffysicist/PyroPy/
 # repo_name: 
 
+favicon: docs/img/favicon.ico
+
+logo: docs/img/FBA-Aus_red_cropped.png
+
 nav:
   - Home: index.md
   - Modules: modules.md
   #- Spread Models: spreadmodels.md
   - Licence: license.md
 
-theme: readthedocs
+#theme: readthedocs
+theme:
+  name: material
+  # palette:
+  #   scheme: PyroPy
+    # primary: red
+
+  favicon: img/favicon.ico
+
+  logo: img/FBA-Aus_red_cropped.png
+
+  font:
+    text: Raleway
 
 plugins:
 - search
@@ -22,9 +38,9 @@ plugins:
         - import sys
         - sys.path.append('src')
         # uncomment the lines below when building
-        # - import shutil
-        # - shutil.copyfile('README.md', 'docs/index.md')
-        # - shutil.copyfile('LICENSE', 'docs/license.md')
+        - import shutil
+        - shutil.copyfile('README.md', 'docs/index.md')
+        - shutil.copyfile('LICENSE', 'docs/license.md')
         rendering:
           show_source: false
           show_root_toc_entry: false
@@ -32,5 +48,5 @@ plugins:
     watch:
       - src/pyropy
 
-
-
+extra_css:
+  - stylesheets/extra.css

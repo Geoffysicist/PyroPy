@@ -160,7 +160,7 @@ def get_FFDI(
     dataframe then this is used, otherwise a drought factor must be supplied or
     the drought factor defaults to 9.
 
-    if `flank=True` the ffdi is calculated for a wind speed = 0
+    if `flank=True` the `ffdi` is calculated for a wind speed = 0
 
     Args:
         df: a pandas dataframe which must contain the specified the weather

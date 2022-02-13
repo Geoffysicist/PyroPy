@@ -1,3 +1,9 @@
+"""firebehaviour.py
+
+Defines the classes used to analyse fire behaviour with PyroPy.
+
+"""
+
 from dataclasses import dataclass
 import warnings
 from pandas import DataFrame
@@ -7,37 +13,17 @@ if __name__ == '__main__':
 else:
     from . import spreadmodels as fs
 
-FIELDS_BASE = {
-    'date_time': 'Date time',
-    'temp': 'Air temperature (C)',
-    'humidity': 'Relative humidity (%)',
-    'wind_speed': '10 m wind speed (km/h)',
-    'wind_dir': 'Wind direction',
-    'wind_dir_cp': 'Wind direction',
-    'drought': 'Drought Factor',
-    'ffdi': 'FFDI',
-    'gfdi': 'GFDI',
-    'dewpoint': 'dew_temp',
-    'fuel_state': 'fuel_state',
-}
-
-FIELDS_GRIDDED = {
-    'date': 'Local Date',
-    'time': 'Local Time',
-    'temp': 'Temp (C)',
-    'humidity': 'RH (%)',
-    'wind_dir': 'Wind Dir',
-    'wind_speed': 'Wind Speed (km/h)',
-    'drought': 'Drought Factor',
-    'ffdi': 'FFDI',
-    'gfdi': 'GFDI',
-}
-
 class Incident(object):
-    """The incident class.
+    """A wildfire incident.
 
     Attributes:
         df (Dataframe): Weather and model output data
+        wrf (float): wind reduction factor (0-6)
+        fuel_load (float): fine fuel load (t/ha)
+        fhs_surf (float): surface fuels hazard score (1-4)
+        fhs_n_surf (float): near surface fuels hazard score (1-4)
+        fuel_height_ns (float): near surface fuel height (cm)
+
     """
     def __init__(self, weather_df: DataFrame):
         self.df = weather_df
@@ -47,24 +33,43 @@ class Incident(object):
         self.fhs_n_surf = None 
         self.fuel_height_ns = None
 
-        self.params = {
-            'wrf': self.wrf,
-            'fuel_load': self.fuel_load,
-        }
+    
+    def get_params(self) -> dict:
+        """Gets the model parameters that have been defined.
 
-    def get_params(self):
-        return self.params
+        Returns:
+            dict: dictionary with model parameter names and values
+        """
+        params = list(self.__dict__.items())
+        params = dict(params[1:]) #drop the dataframe
+        params = {key: val for key, val in params.items() if val}
+        return params
 
 
-    def get_df(self):
+    def get_df(self) -> DataFrame:
+        """
+
+        Returns:
+            DataFrame: the Incident Data as a pandas `Dataframe`
+        """
         return self.df
 
     def update_params(self, params: dict) -> None:
+        """Update several model parameters using a dictionary.
+
+        The dictionary keys must match the name of the parameter.
+
+        Args:
+            params (dict): a dictionary of the model parameters to be updated.
+        """
         for key, val in params.items():
             setattr(self, key, val)
-            self.params[key] = val
 
     def run_forest_mk5(self) -> None:
+        """Runs the McArthur Mk5 Forest Fire Danger Meter model.
+
+        Adds the results to the `Incident.df`
+        """
         forest_mk5_params = {
             'wrf': self.wrf,
             'fuel_load': self.fuel_load,
@@ -73,6 +78,10 @@ class Incident(object):
             self.df = fs.ros_forest_mk5(self.df, self.wrf, self.fuel_load)
 
     def run_forest_vesta(self) -> None:
+        """Runs the Project Vesta (fuel hazard scores) model.
+
+        Adds the results to the `Incident.df`
+        """
         forest_vesta_params = {
             'fhs_surf': self.fhs_surf,
             'fhs_n_surf': self.fhs_n_surf,
@@ -88,12 +97,30 @@ class Incident(object):
             )
 
     def print(self, head=False):
+        """Prints the field headings and rows of the `Dataframe`
+
+        Args:
+            head (bool, optional): Print only the head (first 5 rows).
+                Defaults to False.
+        """
         if head: print(self.df.head())
         else: print(self.df)
 
-    def check_params(self, params) -> bool:
-        for key, val in params.items():
-            if not val:
+    def check_params(self, params: dict) -> bool:
+        """Checks to see if parameters have been defined.
+
+        Args:
+            params (dict): a dictionary with the parmeters to check.
+
+        Returns:
+            bool: `True` is values for the parameters have been defined,
+                else `False`
+        """
+        incident_params = self.get_params()
+        # for key, val in params.items():
+        #     if not incident_params[key]:
+        for key in params.keys():
+            if not key in incident_params.keys():
                 warnings.warn(f'{key} not set - run update params')
                 return False
         return True
