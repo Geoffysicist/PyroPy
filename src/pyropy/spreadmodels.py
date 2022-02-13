@@ -1,8 +1,10 @@
-"""
+"""spreadmodels.py
+
 Australian rate of spread models for wildfire and prescribed burns.
 
 Unless otherwise indicated all models have been taken from:
-Cruz, Miguel, James Gould, Martin Alexander, Lachie Mccaw, and Stuart Matthews. 
+
+> Cruz, Miguel, James Gould, Martin Alexander, Lachie Mccaw, and Stuart Matthews. 
 (2015) A Guide to Rate of Fire Spread Models for Australian Vegetation, 
 CSIRO Land & Water and AFAC, Melbourne, Vic 125 pp. 
 
@@ -20,7 +22,7 @@ The weather dataframe must include the following exact fields (column headings):
     wind_dir: Wind direction (°)
 ```
 Ideally the weather dataframe should include a drought factor though this
-can be added as a parameter. TODO error checking for this!
+can be added as a parameter. TODO add error checking for this!
 
 The `weather` module provides function for reading `*.csv` files into 
 dataframes from standard sources
@@ -38,9 +40,16 @@ def ros_forest_mk5(
         wrf: float, 
         fuel_load: float,
     ) -> DataFrame:
-    """Predicts the FROS from McArthur 1973a Mk5 Forest Fire Danger Meter.
+    """Forward Rate of Spread (FROS) from McArthur Mk5 Forest Fire Danger Meter.
+    
+    Eqn: 5.27
 
-    Uses Eqn 5.27
+    Application: Wildfire in Sclerophyll (Eucalypt) forests
+   
+    Notes: This model is still widely used by FBAns in Australia though 
+    Cruz et al. 2015 recommend using Vesta in preference. However many 
+    FBAns feel that Vesta over predicts ROS unless conditions are 
+    severe.
 
     Args:
         df: a pandas dataframe which must contain the specified the weather
@@ -49,19 +58,16 @@ def ros_forest_mk5(
         fuel_load: fine fule load t/ha
 
     Returns:
-        a pandas dataframe including the fields `fros_mk5` the forward
-        rate of spread (km/h), `fros_dir` the direction of spread, and `ffdi`
-        the forest fire danger index.
-    
-    TODO use leaflet 80 when FFDI < 12
+        a pandas dataframe including the fields
+            
+            `fros_mk5` the forward rate of spread (m/h)
     """
     ros_df = df.copy(deep=True)
-    ros_df['fros_dir'] = spread_direction(df)
     
-    #TODO use BOM FFDI if supplied?
-    ros_df['ffdi'] = get_FFDI(df, wrf)
+    #TODO should we always calculate this?
+    if not ('ffdi' in ros_df.columns): ros_df['ffdi'] = get_FFDI(df, wrf)
 
-    ros_df['fros_mk5'] = 0.0012*ros_df['ffdi']*fuel_load
+    ros_df['fros_mk5'] = 0.0012*ros_df['ffdi']*fuel_load*1000 #convert to m/h
 
     return ros_df
 
@@ -71,49 +77,82 @@ def ros_forest_vesta(
         fhs_n_surf: float,
         fuel_height_ns: float, #cm
     ) -> DataFrame:
-    """Project Vesta Cheney et al 2012.
+    """Forward Rate of Spread (FROS) from Project Vesta (fuel hazard scores)
 
-    using fuel hazard scores Eq 5.28
+    Eqn: 5.28
+
+    Application: Wildfire in Sclerophyll (Eucalypt) forests
+   
+    Notes: Many FBAns feel that Vesta over predicts ROS unless conditions
+    are severe and use McArthur 1973a Mk5 Forest Fire Danger Meter.
+
+    Args:
+        df: a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
+        fhs_surf: surface fuel hazard score (0-4)
+        fhs_n_surf: near surface fuel hazard score (0-4)
+        fuel_height_ns: near surface fuel height (cm)
+
+    Returns:
+        a pandas dataframe including the fields
+
+            `mc` the fuel moisture conent (%)
+            `fros_vesta` the forward rate of spread (m/h)
     """
 
     # determine moisture content
     #TODO tidy this with df.where
-    df['mc'] = np.where(
-        (df['date_time'].dt.hour >= 9) & (df['date_time'].dt.hour < 20),
+    ros_df = df.copy(deep=True)
+
+
+    ros_df['mc'] = np.where(
+        (ros_df['date_time'].dt.hour >= 9) & (ros_df['date_time'].dt.hour < 20),
         np.where(
-            (df['date_time'].dt.hour >= 12) & (df['date_time'].dt.hour < 17), 
-            2.76 + (0.124*df['humidity']) - (0.0187*df['temp']), 
-            3.6 + (0.169*df['humidity']) - (0.045*df['temp'])
+            (ros_df['date_time'].dt.hour >= 12) & (ros_df['date_time'].dt.hour < 17), 
+            2.76 + (0.124*ros_df['humidity']) - (0.0187*ros_df['temp']), 
+            3.6 + (0.169*ros_df['humidity']) - (0.045*ros_df['temp'])
         ),
-        3.08 + (0.198*df['humidity']) - (0.0483*df['temp'])
+        3.08 + (0.198*ros_df['humidity']) - (0.0483*ros_df['temp'])
     )
 
     # determine moisture function
-    df['mf'] = 18.35 * df['mc']**-1.495
+    mf = 18.35 * ros_df['mc']**-1.495
 
     # determine the ROS
-    # df['ros'] = 30.0 * df['mf'] / 1000
-    df['fros_vesta'] = np.where(
-        df['wind_speed'] > 5,
-        30.0 + 1.531 * (df['wind_speed']-5)**0.8576 * fhs_surf**0.93 * (fhs_n_surf*fuel_height_ns)**0.637 * 1.03,
+    ros_df['fros_vesta'] = np.where(
+        ros_df['wind_speed'] > 5,
+        30.0 + 1.531 * (ros_df['wind_speed']-5)**0.8576 * fhs_surf**0.93 * (fhs_n_surf*fuel_height_ns)**0.637 * 1.03,
         30
     )
 
-    df['fros_vesta'] = df['fros_vesta']* df['mf']
-    return df
+    ros_df['fros_vesta'] = ros_df['fros_vesta']* mf
+    return ros_df
 
-#Additional functions TODO to helpers?
-def spread_direction(weather_df: DataFrame) -> DataFrame:
-    """ Converts wind direction to spread direction"""
+def spread_direction(df: DataFrame) -> Series:
+    """ Converts wind direction to spread direction.
+    
+    Args:
+        df: a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
 
-    return np.where(
-        weather_df['wind_dir'] < 180,
-        weather_df['wind_dir'] + 180,
-        weather_df['wind_dir'] - 180
+    Returns:
+        a pandas Series of spread direction in degrees.
+    """
+    fros_dir = np.where(
+        df['wind_dir'] < 180,
+        df['wind_dir'] + 180,
+        df['wind_dir'] - 180
     )
 
-def get_FFDI(df: DataFrame, wrf: int = 3, flank=False, DF=9) -> Series:
-    """Calculates FFDI.
+    return Series(fros_dir)
+
+def get_FFDI(
+        df: DataFrame, 
+        wrf: int = 3, 
+        flank: bool=False, 
+        DF: int=9,
+    ) -> Series:
+    """McArthur Forest Fire Danger Index (FFDI).
     
     Uses Eqn 5.19.
 
@@ -128,10 +167,11 @@ def get_FFDI(df: DataFrame, wrf: int = 3, flank=False, DF=9) -> Series:
             data. This can be an Incident dataframe (`Incident.df`)
         wrf: a wind reduction factor
         flank: if `flank=True` the ffdi is calculated for a wind speed = 0
-        DF: drought factor, this is only used if there is no `drought` in the weather
+        DF: drought factor, this is only used if there is no `drought` in the 
+            DataFrame
 
     Returns:
-        a pandas Series that can be added to an existing Incident dataframe.
+        a pandas Series of FFDI.
 
     Raises:
         no errors 
@@ -151,3 +191,33 @@ def get_FFDI(df: DataFrame, wrf: int = 3, flank=False, DF=9) -> Series:
         )
     
     return np.round(ffdi, 1)
+
+#templates - not in documentation
+def _ros_template(
+        df: DataFrame, 
+        arg1: object, 
+        arg2: object,
+    ) -> DataFrame:
+    """Forward Rate of Spread (FROS) from model_name.
+    
+    Eqn: N.NN
+
+    Application: vetetation type
+   
+    Notes: anything else about the model.
+
+    Args:
+        df: a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
+        arg1: whatever arg1 represents (units)
+        arg2: whatever arg2 represents (units)
+
+    Returns:
+        a pandas dataframe including the fields
+        
+            `fros_template` the forward rate of spread (m/h)
+            `field1` description of field 1
+            `field2` description of field 2.
+    """
+
+    pass

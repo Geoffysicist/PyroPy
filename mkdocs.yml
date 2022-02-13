@@ -2,10 +2,12 @@ site_name: PyroPy
 site_author: Geoffysicist
 site_url: http://geoffysicist.github.io/PyroPy/
 repo_url: https://github.com/Geoffysicist/PyroPy/
+# repo_name: 
 
 nav:
   - Home: index.md
   - Modules: modules.md
+  #- Spread Models: spreadmodels.md
   - Licence: license.md
 
 theme: readthedocs
@@ -20,11 +22,12 @@ plugins:
         - import sys
         - sys.path.append('src')
         # uncomment the lines below when building
-        - import shutil
-        - shutil.copyfile('README.md', 'docs/index.md')
-        - shutil.copyfile('LICENSE', 'docs/license.md')
+        # - import shutil
+        # - shutil.copyfile('README.md', 'docs/index.md')
+        # - shutil.copyfile('LICENSE', 'docs/license.md')
         rendering:
           show_source: false
+          show_root_toc_entry: false
     #custom_templates: templates
     watch:
       - src/pyropy
