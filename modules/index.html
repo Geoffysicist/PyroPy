@@ -1015,6 +1015,7 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
       <p>"Creates a weather <code>DataFrame</code> containing 
 <a href="https://research.csiro.au/amicus/">Amicus</a> compatible fields.</p>
+<p>Writes the weather data to a <code>*.csv</code> file</p>
 <p>The output fields are:</p>
 <pre><code>'date_time': 'Date time',
 'temp': 'Air temperature (°C)',
@@ -1081,7 +1082,8 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
     <div class="doc doc-contents ">
 
-      <p>"Creates a weather <code>DataFrame</code> containing the fields defined in <code>col_names</code>.</p>
+      <p>"Creates a weather <code>DataFrame</code> containing the fields in <code>col_names</code>.</p>
+<p>Writes the weather data to a <code>*.csv</code> file</p>
 <p>The default fields are:</p>
 <pre><code>    'date': 'Local Date',
     'time': 'Local Time',
