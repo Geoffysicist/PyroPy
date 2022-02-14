@@ -6,12 +6,15 @@ Defines the classes used to analyse fire behaviour with PyroPy.
 
 from dataclasses import dataclass
 import warnings
+from openpyxl import load_workbook
 from pandas import DataFrame
 
 if __name__ == '__main__':
-    import spreadmodels as fs
+    import spreadmodels as fbs
+    # import helpers as fbh
 else:
-    from . import spreadmodels as fs
+    from . import spreadmodels as fbs
+    # from . import helpers as fbh
 
 class Incident(object):
     """A wildfire incident.
@@ -45,7 +48,6 @@ class Incident(object):
         params = {key: val for key, val in params.items() if val}
         return params
 
-
     def get_df(self) -> DataFrame:
         """
 
@@ -53,6 +55,22 @@ class Incident(object):
             DataFrame: the Incident Data as a pandas `Dataframe`
         """
         return self.df
+
+    def get_models(self) -> list:
+        """
+
+        Returns:
+            list: a list of the models that have been run for the Incident
+        """
+        models = {
+            'forest_mk5': 'fros_mk5',
+            'forest_vesta': 'fros_vesta',
+        }
+
+        return [
+            key for key, val in models.items() 
+            if val in self.df.columns.values
+        ]
 
     def update_params(self, params: dict) -> None:
         """Update several model parameters using a dictionary.
@@ -75,7 +93,7 @@ class Incident(object):
             'fuel_load': self.fuel_load,
         }
         if self.check_params(forest_mk5_params):
-            self.df = fs.ros_forest_mk5(self.df, self.wrf, self.fuel_load)
+            self.df = fbs.ros_forest_mk5(self.df, self.wrf, self.fuel_load)
 
     def run_forest_vesta(self) -> None:
         """Runs the Project Vesta (fuel hazard scores) model.
@@ -88,15 +106,16 @@ class Incident(object):
             'fuel_height_ns': self.fuel_height_ns,
         }
 
+
         if self.check_params(forest_vesta_params):
-            self.df = fs.ros_forest_vesta(
+            self.df = fbs.ros_forest_vesta(
                 self.df, 
                 self.fhs_surf, 
                 self.fhs_n_surf, 
                 self.fuel_height_ns,
             )
 
-    def print(self, head=False):
+    def print(self, head=False) -> None:
         """Prints the field headings and rows of the `Dataframe`
 
         Args:
@@ -117,13 +136,46 @@ class Incident(object):
                 else `False`
         """
         incident_params = self.get_params()
-        # for key, val in params.items():
-        #     if not incident_params[key]:
         for key in params.keys():
             if not key in incident_params.keys():
                 warnings.warn(f'{key} not set - run update params')
                 return False
         return True
+
+    def compare_fba_calc(self, fn: str) -> None:
+        """Loads results from an FireBehaviourCalcs spreadsheet into the 
+        `Incident.df`.
+
+        Only loads the pages from FireBehaviourCalcs that have correspond 
+        to models already in the `Incident.df` 
+
+        Args:
+            fn (str): path to the FireBehaviourCalcs spreadsheet
+
+        Returns:
+            None:
+        """
+        calc_models = {
+            'fros_mk5': ['Forest(McArthur)', 'O'],
+            'fros_vesta': ['Forest(VESTA)', 'P'],
+        }
+        models = self.get_models()
+        # for m in models
+        # if fbh.check_filepath(fn, suffix='xlsm'):
+        wb = load_workbook(fn, data_only=True, keep_vba=True)
+        for key, val in calc_models.items():
+            if key in self.df.columns.values:
+                model, column = val
+                ws = wb[model]
+                column = ws[column]
+                ros_vals =  [cell.value for cell in column if cell.value]
+                ros_vals = [val for val in ros_vals if (type(val) is float)]
+                if len(ros_vals) == len(self.df):
+                    self.df[f'{key}_calc'] = ros_vals
+        return None #ros_vals
+                    
+
+
 
 if __name__ == '__main__':
     pass

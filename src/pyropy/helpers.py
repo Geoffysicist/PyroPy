@@ -26,6 +26,7 @@ def check_encoding(fn: str) -> str:
     with open(fn) as f:
         return(f.encoding)
 
+
 def incident_to_calc(
         incident: Incident,
         calc_fn: str, 

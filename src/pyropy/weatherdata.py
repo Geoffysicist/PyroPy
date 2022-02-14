@@ -1,7 +1,47 @@
 """weatherdata.py
 
-Functions for reading, transforming and writing weather data for fire behavior.
+Functions for reading, transforming and writing weather data.
 
+The fire behaviour models require certain fields to be present in the weather 
+data and these are mapped using dictionaries. There are several standard 
+mappings included (see below), but for non-standard data users must create 
+their own dictionary.
+
+For use in `spreadmodels` functions, the weather dataframe must include the 
+following fields (column headings) as a minimum:
+```
+    'date_time': a datetime field
+    'temp': Air temerature (°C)
+    'humidity': Relative humidity (%)
+    'wind_speed': 10 m wind speed (km/h)
+    'wind_dir': Wind direction (°)
+```
+The datetime field may be replaced by two separate fields:
+```
+    'date': the local date
+    'time': the local time
+```
+Other optional fields used by the spreadmodels include:
+```
+    'drought': Drought Factor
+    'ffdi': McArthur Mk5 Forest Fire Danger Index
+    'gfdi': McArthur Mk5 Grass Fire Danger Index
+```
+
+There are functions to handle the standard data formats such as BOM gridded 
+weather with mapping dictionaries already defined.
+
+```python
+gridded_to_df(fn)
+amicus_to_df(fn)
+df_to_gridded(fn)
+df_to_amicus(fn)
+```
+
+For example, if you are using BOM gridded weather data the you should run:
+```python
+df = gridded_to_df('your_file_path.csv')
+```
 """
 
 import pandas as pd
@@ -18,8 +58,6 @@ FIELDS_BASE = {
     'humidity': 'Relative humidity (%)',
     'wind_speed': '10 m wind speed (km/h)',
     'wind_dir': 'Wind direction',
-    'wind_dir_cp': 'Wind direction',
-    'drought': 'Drought Factor',
 }
 
 FIELDS_GRIDDED = {
@@ -48,14 +86,31 @@ def weather_to_df(
         col_names: dict = FIELDS_BASE, 
         datetime_format: str = "%d/%m/%Y %H:%M",
     ) -> DataFrame:
+
     """Reads weather forecast or observations into a pandas `DataFrame`.
+    Unless a `col_names` dictionary is supplied, the `FIELDS_BASE` dictionary is 
+    used.
+    ```
+    FIELDS_BASE = {
+        'date_time': 'Date time',
+        'temp': 'Air temperature (C)',
+        'humidity': 'Relative humidity (%)',
+        'wind_speed': '10 m wind speed (km/h)',
+        'wind_dir': 'Wind direction',
+    }
+    ```
 
     Args:
         fn: the path to the csv or axf file
         header: the line containing the column headers
         col_names: the dictionary containing the column names to read into the
             dataframe
-        datetime_format: string format for the date times
+        datetime_format: string format for the date times. Use a single string 
+            of the form `'date_format time_format'` even if supplying date and 
+            time as two separete fields.
+
+    Returns:
+        weather dataframe
     """
 
     check_filepath(fn, suffix='csv')
@@ -87,11 +142,11 @@ def weather_to_df(
 
     return df[col_names.keys()]
 
-def gridded_to_df(fn: str) -> DataFrame:
+def gridded_to_df(fn: str, header: int = 6) -> DataFrame:
     """Reads BoM gridded weather forecast or observations into a pandas 
         `DataFrame`.
     
-    Assumes that the header row = 6 and the field names are:
+    Fields are mapped using
 
     > ```
     FIELDS_GRIDDED = {
@@ -112,7 +167,7 @@ def gridded_to_df(fn: str) -> DataFrame:
     Returns:
         a pandas DataFrame with the columns defined in `FIELDS_GRIDDED`
     """
-    return weather_to_df(fn, header = 6, col_names = FIELDS_GRIDDED, datetime_format="%d/%m/%Y %H:%M")
+    return weather_to_df(fn, header = header, col_names = FIELDS_GRIDDED, datetime_format="%d/%m/%Y %H:%M")
 
 def df_to_weather(df: DataFrame, fn: str, col_names = FIELDS_BASE, datetime_format="%Y%m%d %H:%M", encoding=None) -> DataFrame:
     """"Creates a weather `DataFrame` containing the fields in `col_names`.
