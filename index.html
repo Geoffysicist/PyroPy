@@ -241,50 +241,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#modules" class="md-nav__link">
-    Modules
+  <a href="#install" class="md-nav__link">
+    Install
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#typical-use" class="md-nav__link">
-    Typical Use
+  <a href="#included-modules" class="md-nav__link">
+    Included modules
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#fire-spread-models" class="md-nav__link">
-    Fire Spread Models
+  <a href="#typical-use-example" class="md-nav__link">
+    Typical Use Example
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#weather-data" class="md-nav__link">
-    Weather Data
-  </a>
-  
-    <nav class="md-nav" aria-label="Weather Data">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#base-weather-data-structure" class="md-nav__link">
-    Base weather data structure
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gridded-weather-data-structure" class="md-nav__link">
-    Gridded weather data structure
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -353,50 +326,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#modules" class="md-nav__link">
-    Modules
+  <a href="#install" class="md-nav__link">
+    Install
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#typical-use" class="md-nav__link">
-    Typical Use
+  <a href="#included-modules" class="md-nav__link">
+    Included modules
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#fire-spread-models" class="md-nav__link">
-    Fire Spread Models
+  <a href="#typical-use-example" class="md-nav__link">
+    Typical Use Example
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#weather-data" class="md-nav__link">
-    Weather Data
-  </a>
-  
-    <nav class="md-nav" aria-label="Weather Data">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#base-weather-data-structure" class="md-nav__link">
-    Base weather data structure
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gridded-weather-data-structure" class="md-nav__link">
-    Gridded weather data structure
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -421,18 +367,33 @@
 <p>Analysis of fire spread and intensity.</p>
 <p>Author: Geoffysicist</p>
 <p>Source code: <a href="https://github.com/Geoffysicist/PyroPy">https://github.com/Geoffysicist/PyroPy</a></p>
-<p>Uses weather data and model specific parameters to predict rate of spread and intensity of wildfires.</p>
-<h3 id="modules">Modules</h3>
+<p>Uses weather data and model specific parameters to predict rate of spread and
+intensity of wildfires.</p>
+<p>Unless otherwise indicated all models have been taken from:</p>
+<blockquote>
+<p>Cruz, Miguel, James Gould, Martin Alexander, Lachie Mccaw, and 
+Stuart Matthews. (2015) <em>A Guide to Rate of Fire Spread Models for Australian 
+Vegetation</em>, CSIRO Land &amp; Water and AFAC, Melbourne, Vic 125 pp. </p>
+</blockquote>
+<h2 id="install">Install</h2>
+<pre><code>pip install PyroPy
+</code></pre>
+<h2 id="included-modules">Included modules</h2>
 <ul>
-<li>firebehaviour: Defines the main <code>Incident</code> class and several auxillary dictionaries. An <code>Incident</code> stores data related to the incident including weather, model parameters and model outputs.</li>
-<li>spreadmodels: fire spread model functions which can be called directly or by an <code>Incident</code>.</li>
-<li>weatherdata: functions for reading, writing and transforming weather between various formats including Australian Bureau of Meteorology (BoM) Gridded Weather, BoM Observations (*.axf) and Amicus.</li>
-<li>helpers: various helper functions for file handling and data processing</li>
+<li><code>firebehaviour</code>: Defines the main <code>Incident</code> class and several auxillary 
+        dictionaries. An <code>Incident</code> stores data related to the incident 
+        including weather, model parameters and model outputs.</li>
+<li><code>spreadmodels</code>: fire spread model functions which can be called directly or 
+        by an <code>Incident</code>.</li>
+<li><code>weatherdata</code>: functions for reading, writing and transforming weather 
+        between various formats including Australian Bureau of Meteorology 
+        (BoM) Gridded Weather, BoM Observations (*.axf) and Amicus.</li>
 </ul>
-<p>for more detailed information see <a href="modules/">modules</a></p>
-<h3 id="typical-use">Typical Use</h3>
+<p>for more detailed information see 
+<a href="https://geoffysicist.github.io/PyroPy/modules/">modules</a>.</p>
+<h2 id="typical-use-example">Typical Use Example</h2>
 <pre><code class="language-python">from pyropy import firebehaviour as fb
-from pyropy import weather_data as wd
+from pyropy import weatherdata as wd
 
 if __name__ == '__main__':
    #read the weather data into a pandas DataFrame
@@ -460,53 +421,6 @@ if __name__ == '__main__':
 
    #output results
    incident.print()
-</code></pre>
-<h2 id="fire-spread-models">Fire Spread Models</h2>
-<p>Unless otherwise indicated all models have been taken from:</p>
-<blockquote>
-<p>Cruz, Miguel, James Gould, Martin Alexander, Lachie Mccaw, and Stuart Matthews. 
-(2015) A Guide to Rate of Fire Spread Models for Australian Vegetation, 
-CSIRO Land &amp; Water and AFAC, Melbourne, Vic 125 pp. </p>
-</blockquote>
-<p>Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.</p>
-<p>All spread models take a pandas weather dataframe and model specific 
-parmeters as arguments.</p>
-<h2 id="weather-data">Weather Data</h2>
-<p>The weather data is read into a pandas dataframe from a <code>*.csv</code> file.
-The fire behaviour models require certain fields to be present in the weather data and these are mapped using dictionaries.
-There are several standard mappings included (see below), but for non-standard data users must create their own dictionary and supply that as an argument to the <code>weather_to_df</code> function. The mapping dictionary must contain the keys in the <code>FIELDS_BASE</code> dictionary as a minimum.</p>
-<p>There are functions to handle the standard data formats such as BOM gridded weather with mapping dictionaries already defined.</p>
-<pre><code class="language-python">gridded_to_df(fn)
-amicus_to_df(fn)
-df_to_gridded(fn)
-df_to_amicus(fn)
-</code></pre>
-<p>For example, if you are using BOM gridded weather data the you should run:</p>
-<pre><code class="language-python">df = gridded_to_df('your_file_path.csv')
-</code></pre>
-<h3 id="base-weather-data-structure"><code>Base</code> weather data structure</h3>
-<p>call the function <code>weather_to_df(fn)</code></p>
-<pre><code class="language-python">FIELDS_BASE = {
-    'date_time': 'Date time',
-    'temp': 'Air temperature (C)',
-    'humidity': 'Relative humidity (%)',
-    'wind_speed': '10 m wind speed (km/h)',
-    'wind_dir': 'Wind direction',
-}
-</code></pre>
-<h3 id="gridded-weather-data-structure"><code>Gridded</code> weather data structure</h3>
-<p>call the function <code>gridded_to_df(fn)</code></p>
-<pre><code class="language-python">FIELDS_GRIDDED = {
-    'date': 'Local Date',
-    'time': 'Local Time',
-    'temp': 'Temp (C)',
-    'humidity': 'RH (%)',
-    'wind_dir': 'Wind Dir',
-    'wind_speed': 'Wind Speed (km/h)',
-    'drought': 'Drought Factor',
-    'ffdi': 'FFDI',
-    'gfdi': 'GFDI',
-}
 </code></pre>
 
               

@@ -294,8 +294,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.compare_fba_calc" class="md-nav__link">
+    compare_fba_calc()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.get_df" class="md-nav__link">
     get_df()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.get_models" class="md-nav__link">
+    get_models()
   </a>
   
 </li>
@@ -665,6 +679,63 @@ Incident        </code>
 
 
 
+<h4 id="pyropy.firebehaviour.Incident.compare_fba_calc" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">compare_fba_calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Loads results from an FireBehaviourCalcs spreadsheet into the 
+<code>Incident.df</code>.</p>
+<p>Only loads the pages from FireBehaviourCalcs that have correspond 
+to models already in the <code>Incident.df</code> </p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>fn</code></td>
+        <td><code>str</code></td>
+        <td><p>path to the FireBehaviourCalcs spreadsheet</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>None</code></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h4 id="pyropy.firebehaviour.Incident.get_df" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
@@ -686,6 +757,40 @@ Incident        </code>
     <tr>
       <td><code>DataFrame</code></td>
       <td><p>the Incident Data as a pandas <code>Dataframe</code></p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="pyropy.firebehaviour.Incident.get_models" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>list</code></td>
+      <td><p>a list of the models that have been run for the Incident</p></td>
     </tr>
   </tbody>
 </table>
@@ -978,16 +1083,17 @@ CSIRO Land &amp; Water and AFAC, Melbourne, Vic 125 pp. </p>
 <p>Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.</p>
 <p>All spread models take a pandas weather dataframe and model specific 
 parmeters as arguments.</p>
-<p>The weather dataframe must include the following exact fields (column headings):</p>
-<pre><code>    date_time: a pandas datetime field
-    temp: Air temerature (°C)
-    humidity: Relative humidity (%)
-    wind_speed: 10 m wind speed (km/h)
-    wind_dir: Wind direction (°)
+<p>The weather dataframe must include the following fields (column headings)
+as a minimum:</p>
+<pre><code>    'date_time': a pandas datetime field
+    'temp': Air temerature (°C)
+    'humidity': Relative humidity (%)
+    'wind_speed': 10 m wind speed (km/h)
+    'wind_dir': Wind direction (°)
 </code></pre>
-<p>Ideally the weather dataframe should include a drought factor though this
-can be added as a parameter. TODO add error checking for this!</p>
-<p>The <code>weather</code> module provides function for reading <code>*.csv</code> files into 
+<p>Ideally the weather dataframe should include a drought factor (<code>'drought'</code>)
+though this can be added as a parameter.</p>
+<p>See the <code>weatherdata</code> module provides functions for reading <code>*.csv</code> files into 
 dataframes from standard sources</p>
 
 
@@ -1315,7 +1421,38 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
     <div class="doc doc-contents ">
 
       <p>weatherdata.py</p>
-<p>Functions for reading, transforming and writing weather data for fire behavior.</p>
+<p>Functions for reading, transforming and writing weather data.</p>
+<p>The fire behaviour models require certain fields to be present in the weather 
+data and these are mapped using dictionaries. There are several standard 
+mappings included (see below), but for non-standard data users must create 
+their own dictionary.</p>
+<p>For use in <code>spreadmodels</code> functions, the weather dataframe must include the 
+following fields (column headings) as a minimum:</p>
+<pre><code>    'date_time': a datetime field
+    'temp': Air temerature (°C)
+    'humidity': Relative humidity (%)
+    'wind_speed': 10 m wind speed (km/h)
+    'wind_dir': Wind direction (°)
+</code></pre>
+<p>The datetime field may be replaced by two separate fields:</p>
+<pre><code>    'date': the local date
+    'time': the local time
+</code></pre>
+<p>Other optional fields used by the spreadmodels include:</p>
+<pre><code>    'drought': Drought Factor
+    'ffdi': McArthur Mk5 Forest Fire Danger Index
+    'gfdi': McArthur Mk5 Grass Fire Danger Index
+</code></pre>
+<p>There are functions to handle the standard data formats such as BOM gridded 
+weather with mapping dictionaries already defined.</p>
+<pre><code class="language-python">gridded_to_df(fn)
+amicus_to_df(fn)
+df_to_gridded(fn)
+df_to_amicus(fn)
+</code></pre>
+<p>For example, if you are using BOM gridded weather data the you should run:</p>
+<pre><code class="language-python">df = gridded_to_df('your_file_path.csv')
+</code></pre>
 
 
 
@@ -1405,7 +1542,7 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
 
 <h3 id="pyropy.weatherdata.df_to_weather" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">df_to_weather</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;date_time&#39;</span><span class="p">:</span> <span class="s1">&#39;Date time&#39;</span><span class="p">,</span> <span class="s1">&#39;temp&#39;</span><span class="p">:</span> <span class="s1">&#39;Air temperature (C)&#39;</span><span class="p">,</span> <span class="s1">&#39;humidity&#39;</span><span class="p">:</span> <span class="s1">&#39;Relative humidity (%)&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_speed&#39;</span><span class="p">:</span> <span class="s1">&#39;10 m wind speed (km/h)&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;Wind direction&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_dir_cp&#39;</span><span class="p">:</span> <span class="s1">&#39;Wind direction&#39;</span><span class="p">,</span> <span class="s1">&#39;drought&#39;</span><span class="p">:</span> <span class="s1">&#39;Drought Factor&#39;</span><span class="p">},</span> <span class="n">datetime_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">df_to_weather</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;date_time&#39;</span><span class="p">:</span> <span class="s1">&#39;Date time&#39;</span><span class="p">,</span> <span class="s1">&#39;temp&#39;</span><span class="p">:</span> <span class="s1">&#39;Air temperature (C)&#39;</span><span class="p">,</span> <span class="s1">&#39;humidity&#39;</span><span class="p">:</span> <span class="s1">&#39;Relative humidity (%)&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_speed&#39;</span><span class="p">:</span> <span class="s1">&#39;10 m wind speed (km/h)&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;Wind direction&#39;</span><span class="p">},</span> <span class="n">datetime_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1454,7 +1591,7 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
         <td><code>col_names</code></td>
         <td></td>
         <td><p>the fields to be returned</p></td>
-        <td><code>{&#39;date_time&#39;: &#39;Date time&#39;, &#39;temp&#39;: &#39;Air temperature (C)&#39;, &#39;humidity&#39;: &#39;Relative humidity (%)&#39;, &#39;wind_speed&#39;: &#39;10 m wind speed (km/h)&#39;, &#39;wind_dir&#39;: &#39;Wind direction&#39;, &#39;wind_dir_cp&#39;: &#39;Wind direction&#39;, &#39;drought&#39;: &#39;Drought Factor&#39;}</code></td>
+        <td><code>{&#39;date_time&#39;: &#39;Date time&#39;, &#39;temp&#39;: &#39;Air temperature (C)&#39;, &#39;humidity&#39;: &#39;Relative humidity (%)&#39;, &#39;wind_speed&#39;: &#39;10 m wind speed (km/h)&#39;, &#39;wind_dir&#39;: &#39;Wind direction&#39;}</code></td>
       </tr>
       <tr>
         <td><code>datetime_format</code></td>
@@ -1496,7 +1633,7 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
 
 <h3 id="pyropy.weatherdata.gridded_to_df" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">gridded_to_df</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">gridded_to_df</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1505,7 +1642,7 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
       <p>Reads BoM gridded weather forecast or observations into a pandas 
     <code>DataFrame</code>.</p>
-<p>Assumes that the header row = 6 and the field names are:</p>
+<p>Fields are mapped using</p>
 <blockquote>
 <p><code>FIELDS_GRIDDED = {
     'date': 'Local Date',
@@ -1565,14 +1702,24 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
 
 <h3 id="pyropy.weatherdata.weather_to_df" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">weather_to_df</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;date_time&#39;</span><span class="p">:</span> <span class="s1">&#39;Date time&#39;</span><span class="p">,</span> <span class="s1">&#39;temp&#39;</span><span class="p">:</span> <span class="s1">&#39;Air temperature (C)&#39;</span><span class="p">,</span> <span class="s1">&#39;humidity&#39;</span><span class="p">:</span> <span class="s1">&#39;Relative humidity (%)&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_speed&#39;</span><span class="p">:</span> <span class="s1">&#39;10 m wind speed (km/h)&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;Wind direction&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_dir_cp&#39;</span><span class="p">:</span> <span class="s1">&#39;Wind direction&#39;</span><span class="p">,</span> <span class="s1">&#39;drought&#39;</span><span class="p">:</span> <span class="s1">&#39;Drought Factor&#39;</span><span class="p">},</span> <span class="n">datetime_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/%m/%Y %H:%M&#39;</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">weather_to_df</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;date_time&#39;</span><span class="p">:</span> <span class="s1">&#39;Date time&#39;</span><span class="p">,</span> <span class="s1">&#39;temp&#39;</span><span class="p">:</span> <span class="s1">&#39;Air temperature (C)&#39;</span><span class="p">,</span> <span class="s1">&#39;humidity&#39;</span><span class="p">:</span> <span class="s1">&#39;Relative humidity (%)&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_speed&#39;</span><span class="p">:</span> <span class="s1">&#39;10 m wind speed (km/h)&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;Wind direction&#39;</span><span class="p">},</span> <span class="n">datetime_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/%m/%Y %H:%M&#39;</span><span class="p">)</span></code>
 
 
 </h3>
 
     <div class="doc doc-contents ">
 
-      <p>Reads weather forecast or observations into a pandas <code>DataFrame</code>.</p>
+      <p>Reads weather forecast or observations into a pandas <code>DataFrame</code>.
+Unless a <code>col_names</code> dictionary is supplied, the <code>FIELDS_BASE</code> dictionary is 
+used.</p>
+<pre><code>FIELDS_BASE = {
+    'date_time': 'Date time',
+    'temp': 'Air temperature (C)',
+    'humidity': 'Relative humidity (%)',
+    'wind_speed': '10 m wind speed (km/h)',
+    'wind_dir': 'Wind direction',
+}
+</code></pre>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1602,14 +1749,31 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
         <td><code>dict</code></td>
         <td><p>the dictionary containing the column names to read into the
 dataframe</p></td>
-        <td><code>{&#39;date_time&#39;: &#39;Date time&#39;, &#39;temp&#39;: &#39;Air temperature (C)&#39;, &#39;humidity&#39;: &#39;Relative humidity (%)&#39;, &#39;wind_speed&#39;: &#39;10 m wind speed (km/h)&#39;, &#39;wind_dir&#39;: &#39;Wind direction&#39;, &#39;wind_dir_cp&#39;: &#39;Wind direction&#39;, &#39;drought&#39;: &#39;Drought Factor&#39;}</code></td>
+        <td><code>{&#39;date_time&#39;: &#39;Date time&#39;, &#39;temp&#39;: &#39;Air temperature (C)&#39;, &#39;humidity&#39;: &#39;Relative humidity (%)&#39;, &#39;wind_speed&#39;: &#39;10 m wind speed (km/h)&#39;, &#39;wind_dir&#39;: &#39;Wind direction&#39;}</code></td>
       </tr>
       <tr>
         <td><code>datetime_format</code></td>
         <td><code>str</code></td>
-        <td><p>string format for the date times</p></td>
+        <td><p>string format for the date times. Use a single string 
+of the form <code>'date_format time_format'</code> even if supplying date and 
+time as two separete fields.</p></td>
         <td><code>&#39;%d/%m/%Y %H:%M&#39;</code></td>
       </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>DataFrame</code></td>
+      <td><p>weather dataframe</p></td>
+    </tr>
   </tbody>
 </table>
     </div>
