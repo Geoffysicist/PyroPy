@@ -13,10 +13,17 @@ def mock_weather():
 def test_spread_direction(mock_weather):
     fros_dir = fs.spread_direction(mock_weather)
     assert type(fros_dir) is Series
+    assert not fros_dir.empty
 
 def test_get_FFDI(mock_weather):
     ffdi = fs.get_FFDI(mock_weather)
     assert type(ffdi) is Series
+    assert not ffdi.empty
+
+def test_get_mc(mock_weather):
+    mc = fs.get_mc(mock_weather)
+    assert type(mc) is Series
+    assert not mc.empty
 
 def test_ros_forest_mk5(mock_weather):
     df = fs.ros_forest_mk5(mock_weather, 3, 15)
@@ -30,3 +37,8 @@ def test_ros_forest_vesta(mock_weather):
     assert type(df) is DataFrame
     assert set(cols).issubset(set(df.columns.values.tolist()))
 
+def test_ros_forest_vesta_fhr(mock_weather):
+    df = fs.ros_forest_vesta_fhr(mock_weather, 'H', 'M')
+    cols = ['mc', 'fros_vesta_fhr']
+    assert type(df) is DataFrame
+    assert set(cols).issubset(set(df.columns.values.tolist()))

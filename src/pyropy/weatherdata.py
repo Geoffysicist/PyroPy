@@ -141,7 +141,7 @@ def weather_to_df(
     # remove unused column names from the base dict
     return_cols = list(FIELDS_BASE.keys())
     return_cols.extend(
-        [key for key in ['drought', 'ffd','gfdi'] if key in col_names.values()]
+        [key for key in ['drought', 'ffdi','gfdi'] if key in col_names.values()]
     )
     return_cols = [key for key in return_cols if key in df.columns]
     

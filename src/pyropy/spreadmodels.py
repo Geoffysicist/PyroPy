@@ -34,6 +34,7 @@ dataframes from standard sources
 
 import numpy as np
 from pandas import DataFrame, Series
+import math as m
 
 def ros_forest_mk5(
         df: DataFrame, 
@@ -65,9 +66,11 @@ def ros_forest_mk5(
     ros_df = df.copy(deep=True)
     
     #TODO should we always calculate this?
-    if not ('ffdi' in ros_df.columns): ros_df['ffdi'] = get_FFDI(df, wrf)
+    # if not ('ffdi' in ros_df.columns): ros_df['ffdi'] = get_FFDI(df, wrf)
+    ros_df['ffdi'] = get_FFDI(df, wrf)
 
-    ros_df['fros_mk5'] = 0.0012*ros_df['ffdi']*fuel_load*1000 #convert to m/h
+    ros_df['fros_mk5'] = (0.0012*ros_df['ffdi']*fuel_load*1000).astype(int) #convert to m/h
+    # ros_df['fros_mk5'].round(1)
 
     return ros_df
 
@@ -77,11 +80,12 @@ def ros_forest_vesta(
         fhs_n_surf: float,
         fuel_height_ns: float, #cm
     ) -> DataFrame:
-    """Forward Rate of Spread (FROS) from Project Vesta (fuel hazard scores)
+    """Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
+    scores
 
     Eqn: 5.28
 
-    Application: Wildfire in Sclerophyll (Eucalypt) forests
+    Application: 
    
     Notes: Many FBAns feel that Vesta over predicts ROS unless conditions
     are severe and use McArthur 1973a Mk5 Forest Fire Danger Meter.
@@ -105,15 +109,17 @@ def ros_forest_vesta(
     ros_df = df.copy(deep=True)
 
 
-    ros_df['mc'] = np.where(
-        (ros_df['date_time'].dt.hour >= 9) & (ros_df['date_time'].dt.hour < 20),
-        np.where(
-            (ros_df['date_time'].dt.hour >= 12) & (ros_df['date_time'].dt.hour < 17), 
-            2.76 + (0.124*ros_df['humidity']) - (0.0187*ros_df['temp']), 
-            3.6 + (0.169*ros_df['humidity']) - (0.045*ros_df['temp'])
-        ),
-        3.08 + (0.198*ros_df['humidity']) - (0.0483*ros_df['temp'])
-    )
+    # ros_df['mc'] = np.where(
+    #     (ros_df['date_time'].dt.hour >= 9) & (ros_df['date_time'].dt.hour < 20),
+    #     np.where(
+    #         (ros_df['date_time'].dt.hour >= 12) & (ros_df['date_time'].dt.hour < 17), 
+    #         2.76 + (0.124*ros_df['humidity']) - (0.0187*ros_df['temp']), 
+    #         3.6 + (0.169*ros_df['humidity']) - (0.045*ros_df['temp'])
+    #     ),
+    #     3.08 + (0.198*ros_df['humidity']) - (0.0483*ros_df['temp'])
+    # )
+    if not 'mc' in ros_df.columns.values:
+        ros_df['mc'] = get_mc(ros_df)
 
     # determine moisture function
     mf = 18.35 * ros_df['mc']**-1.495
@@ -125,8 +131,57 @@ def ros_forest_vesta(
         30
     )
 
-    ros_df['fros_vesta'] = ros_df['fros_vesta']* mf
+    ros_df['fros_vesta'] = (ros_df['fros_vesta']* mf).astype(int)
+
     return ros_df
+
+def ros_forest_vesta_fhr(
+        df: DataFrame, 
+        fhr_surf: str, 
+        fhr_n_surf: str,
+    ) -> DataFrame:
+    """Forward Rate of Spread (FROS) from Project Vesta using fuel hazard
+    ratings
+    
+    Eqn: 5.31
+
+    Application: Wildfire in Sclerophyll (Eucalypt) forests
+   
+    Notes: anything else about the model.
+
+    Args:
+        df: a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
+        fhr_surf: Surface Fuel Hazard Rating (L, M, H, V, E)
+        fhr_n_surf: Near Surface Fuel Hazard Rating (L, M, H, V, E)
+
+    Returns:
+        a pandas dataframe including the fields
+        
+            `fros_vesta_fhr` the forward rate of spread (m/h)
+    """
+    ros_df = df.copy(deep=True)
+    near_surface = {'L': 0.4694, 'M': 0.7070, 'H': 1.2772, 'V': 1.7492, 'E': 1.2446}
+    surface = {'L': 0.0, 'M': 1.5608, 'H': 2.1412, 'V': 2.0548, 'E': 2.3251}
+
+    surf_coeff = surface[fhr_surf]
+    near_surf_coeff = near_surface[fhr_n_surf]
+
+    if not 'mc' in ros_df.columns.values:
+        ros_df['mc'] = get_mc(ros_df)
+
+    # determine moisture function
+    mf = 18.35 * ros_df['mc']**-1.495
+
+    ros_df['fros_vesta_fhr'] = np.where(
+        ros_df['wind_speed'] > 5,
+        30.0 + 2.3117 * (ros_df['wind_speed']-5)**0.8364 * m.exp(surf_coeff+near_surf_coeff) * 1.02,
+        30
+    )
+    ros_df['fros_vesta_fhr'] = (ros_df['fros_vesta_fhr']*mf).astype(int)
+
+    return ros_df
+
 
 def spread_direction(df: DataFrame) -> Series:
     """ Converts wind direction to spread direction.
@@ -187,7 +242,32 @@ def get_FFDI(
         +0.0234* wind_speed * 3 / wrf 
         )
     
-    return np.round(ffdi, 1)
+    return Series(ffdi.round(1))
+
+def get_mc(df: DataFrame) -> Series:
+    """Calculates the moisture content using equation 5.30
+
+    Args:
+        df (DataFrame): a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
+
+    Returns:
+        Series: the fine dead fuel moisture content (%)
+    """
+
+    mc = np.where(
+        (df['date_time'].dt.hour >= 9) & (df['date_time'].dt.hour < 20),
+        np.where(
+            (df['date_time'].dt.hour >= 12) & (df['date_time'].dt.hour < 17), 
+            2.76 + (0.124*df['humidity']) - (0.0187*df['temp']), 
+            3.6 + (0.169*df['humidity']) - (0.045*df['temp'])
+        ),
+        3.08 + (0.198*df['humidity']) - (0.0483*df['temp'])
+    )
+
+    return Series(mc.round(1))
+
+
 
 #templates - not in documentation
 def _ros_template(

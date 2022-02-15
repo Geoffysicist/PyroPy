@@ -7,7 +7,7 @@ Defines the classes used to analyse fire behaviour with PyroPy.
 from dataclasses import dataclass
 import warnings
 from openpyxl import load_workbook
-from pandas import DataFrame
+from pandas import DataFrame, read_csv
 
 if __name__ == '__main__':
     import spreadmodels as fbs
@@ -35,6 +35,8 @@ class Incident(object):
         self.fhs_surf = None
         self.fhs_n_surf = None 
         self.fuel_height_ns = None
+        self.fhr_surf = None
+        self.fhr_n_surf = None
 
         self.fbcalc_params_mk5 = {
             'wrf': 'J4',
@@ -56,7 +58,10 @@ class Incident(object):
         """
         params = list(self.__dict__.items())
         params = dict(params[1:]) #drop the dataframe
-        params = {key: val for key, val in params.items() if val}
+        params = {
+            key: val for key, val in params.items() 
+            if isinstance(val,(int,float,str))
+        }
         return params
 
     def get_df(self) -> DataFrame:
@@ -126,6 +131,23 @@ class Incident(object):
                 self.fuel_height_ns,
             )
 
+    def run_forest_vesta_fhr(self) -> None:
+        """Runs the Project Vesta (fuel hazard scores) model.
+
+        Adds the results to the `Incident.df`
+        """
+        forest_vesta_params = {
+            'fhr_surf': self.fhr_surf,
+            'fhr_n_surf': self.fhr_n_surf,
+        }
+
+        if self.check_params(forest_vesta_params):
+            self.df = fbs.ros_forest_vesta_fhr(
+                self.df, 
+                self.fhr_surf, 
+                self.fhr_n_surf, 
+            )
+
     def print(self, head=False) -> None:
         """Prints the field headings and rows of the `Dataframe`
 
@@ -164,7 +186,9 @@ class Incident(object):
             fn (str): path to the FireBehaviourCalcs spreadsheet
             model (list): a list of the models to compare. Valid items
                 include: `'mk5'` McArthur mk5 model, `'vesta'` The Project 
-                VESTA model
+                VESTA model. Also there is a little easter egg here and if you 
+                put 'mc' as the model it will get the moisture content (%)
+                from the VESTA model.
 
         Returns:
             None:
@@ -172,11 +196,12 @@ class Incident(object):
         fbcalc_refs = {
             'mk5': ['Forest(McArthur)', 'O', self.fbcalc_params_mk5],
             'vesta': ['Forest(VESTA)', 'P', self.fbcalc_params_vesta],
+            'mc': ['Forest(VESTA)', 'M', {}],
         }
 
         run_model_functions = {
-            'mk5': self.run_forest_mk5(),
-            'vesta': self.run_forest_vesta(),
+            'mk5': self.run_forest_mk5,
+            'vesta': self.run_forest_vesta,
         }
 
         if fbh.check_filepath(fn, suffix='xlsm'):
@@ -190,13 +215,23 @@ class Incident(object):
                             cell.value, (float, int)
                         )]
                     self.df[f'{model}_fbcalc'] = ros_vals
+                    self.df[f'{model}_fbcalc'] = self.df[f'{model}_fbcalc'].astype(int)
                     params = {param: ws[address].value 
                         for (param, address) in model_params.items()
                     }
 
                     self.set_params(params)
-                    run_model_functions[model]            
+                    if model in run_model_functions.keys(): #trick it into getting columns that aren't models like mc
+                        run_model_functions[model]()            
         return None
+
+    def compare_amicus(self, fn: str) -> None:
+        if fbh.check_filepath(fn, suffix='csv'):
+            print(fbh.check_encoding(fn))
+            df = read_csv(fn, header=0, encoding=fbh.check_encoding(fn))
+            self.df['mc_amicus'] = df['Predicted FMC (%)']
+            self.df['vesta_amicus'] = df['Rate of spread (m/h)']
+        pass
 
     def set_fbcalc(self, fn: str) -> bool:
         """Writes the weather data and model parameters to a FireBehaviourCalc
@@ -204,11 +239,12 @@ class Incident(object):
 
         ** WARNING! THE VALUES IN THE SPREADSHEET WILL BE OVERWRITTEN **
 
+        Spreadsheet macros will not run (ie changes will not take place in 
+        the spreadsheet) until you open it and click on the relevant sheets.
+
         Args:
             fn (str): path to the FireBehaviourCalc spreadsheet. 
-
-            Spreadsheet macros will not run (ie changes will not take place in 
-            the spreadsheet) until you open it and click on the relevant sheets. 
+                 
         
         Returns:
             `True` f successful else `False`

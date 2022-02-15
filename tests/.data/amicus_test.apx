@@ -1,0 +1,134 @@
+<!DOCTYPE serializeddata>
+<project name="Amicus">
+ <headerInfo applicationMajorVersion="0" fileFormatVersion="1" applicationPatchVersion="39682" applicationMinorVersion="5"/>
+ <globalNameValues>
+  <input globalname="Aspect">0</input>
+  <input globalname="Buttongrass/Moisture content prediction model selection"></input>
+  <input globalname="Buttongrass/Years since last fire">10</input>
+  <input globalname="Cloud type selection">Percentage</input>
+  <input globalname="Degrees of curing">100</input>
+  <input globalname="Drought index">100</input>
+  <input globalname="Elevated fuel height">1</input>
+  <input globalname="Elevation">0</input>
+  <input globalname="Fine fuel load - forests">12.5</input>
+  <input globalname="Fine fuel load - shrublands">12.5</input>
+  <input globalname="Forest fuel type selection"></input>
+  <input globalname="Forest measured FMC">7</input>
+  <input globalname="Fuel load per hectare">3</input>
+  <input globalname="Grass measured FMC">9</input>
+  <input globalname="Grassland fuel type selection"></input>
+  <input globalname="Hours since rain">0</input>
+  <input globalname="Latitude">0</input>
+  <input globalname="Longitude">0</input>
+  <input globalname="MaritimePine/Canopy base height">6</input>
+  <input globalname="MaritimePine/Canopy fuel load">10</input>
+  <input globalname="MaritimePine/Fine dead litter">7</input>
+  <input globalname="MaritimePine/Other surface fuel load">6</input>
+  <input globalname="MaritimePine/Specify fine dead litter">0</input>
+  <input globalname="MaritimePine/Stand height">20</input>
+  <input globalname="MaritimePine/Surface fine fuel load">5</input>
+  <input globalname="MaritimePine/Toggle run">0</input>
+  <input globalname="MaritimePine/Understorey fuel selection">Litter and shrubby understorey</input>
+  <input globalname="MaritimePine/Wind attenuation coefficient">1.2</input>
+  <input globalname="Measurement elevation">0</input>
+  <input globalname="Moist conditions prescribed burn toggle">1</input>
+  <input globalname="Moist conditions wildfire toggle">0</input>
+  <input globalname="Notes"></input>
+  <input globalname="Number of days since rain">5</input>
+  <input globalname="Override predicted grass FMC">0</input>
+  <input globalname="Plantation fuel type selection"></input>
+  <input globalname="RadiataPine/Canopy base height">0.5</input>
+  <input globalname="RadiataPine/Canopy fuel load">11</input>
+  <input globalname="RadiataPine/Fine 1hr FMC">0.050000000000000003</input>
+  <input globalname="RadiataPine/Fine dead litter">7</input>
+  <input globalname="RadiataPine/Large 100hr FMC">0.070000000000000007</input>
+  <input globalname="RadiataPine/Live herbaceous FMC">0.029999999999999999</input>
+  <input globalname="RadiataPine/Live shrub FMC">0.10000000000000001</input>
+  <input globalname="RadiataPine/Live shrubby">75</input>
+  <input globalname="RadiataPine/Medium 10hr FMC">0.059999999999999998</input>
+  <input globalname="RadiataPine/Other surface fuel load">2</input>
+  <input globalname="RadiataPine/Specify fine dead litter">0</input>
+  <input globalname="RadiataPine/Stand height">8</input>
+  <input globalname="RadiataPine/Surface fine fuel load">4</input>
+  <input globalname="RadiataPine/Toggle run">0</input>
+  <input globalname="RadiataPine/Understorey fuel selection">Litter and shrubby understorey</input>
+  <input globalname="RadiataPine/Wind attenuation coefficient">1.6000000000000001</input>
+  <input globalname="Rainfall since 9 am">20</input>
+  <input globalname="SemiAridHeath/Elevated fuel layer Fuel Hazard Score">2</input>
+  <input globalname="SemiAridHeath/Near-surface fuel layer percent cover score">2</input>
+  <input globalname="SemiAridMalleeHeath/Mallee overstorey height">1</input>
+  <input globalname="SemiAridMalleeHeath/Overstorey mallee cover">10</input>
+  <input globalname="Short Rotation Eucalypt ground cover selection"></input>
+  <input globalname="ShortRotationEucalypt/SouthernGrass/Pasture">0</input>
+  <input globalname="ShortRotationEucalypt/Wildfire/Fuel hazard type selection"></input>
+  <input globalname="ShortRotationEucalypt/Wildfire/HazardRating/Bark ratings selection">Low</input>
+  <input globalname="ShortRotationEucalypt/Wildfire/HazardRating/Near-surface fuel hazard rating">4</input>
+  <input globalname="ShortRotationEucalypt/Wildfire/HazardRating/Surface fuel hazard rating">6</input>
+  <input globalname="ShortRotationEucalypt/Wildfire/HazardScore/Bark hazard score">0</input>
+  <input globalname="ShortRotationEucalypt/Wildfire/HazardScore/Near-surface fuel hazard score">3</input>
+  <input globalname="ShortRotationEucalypt/Wildfire/HazardScore/Near-surface fuel height">20</input>
+  <input globalname="ShortRotationEucalypt/Wildfire/HazardScore/Surface fuel hazard score">3.5</input>
+  <input globalname="ShortRotationEucalypt/Wind reduction factor">0.80000000000000004</input>
+  <input globalname="Shrubland fuel type selection"></input>
+  <input globalname="Shrubland measured FMC">7</input>
+  <input globalname="Slope">0</input>
+  <input globalname="SouthernGrass/Pasture">0</input>
+  <input globalname="Specified drought factor">5</input>
+  <input globalname="Specify a drought factor">0</input>
+  <input globalname="Spinifex cover">50</input>
+  <input globalname="Spinifex height">20</input>
+  <input globalname="Spinifex measured FMC">12</input>
+  <input globalname="Spinifex/Fuel load per hectare">5</input>
+  <input globalname="Spinifex/Spinifex model selection"></input>
+  <input globalname="TemperateShrubland/Average vegetation height">2</input>
+  <input globalname="TemperateShrubland/Woodland overstorey">0</input>
+  <input globalname="Use measured forest FMC">0</input>
+  <input globalname="Use measured shrubland FMC">0</input>
+  <input globalname="Wet eucalypt shrub type">0</input>
+  <input globalname="Wildfire/Fuel hazard type selection">Fuel hazard rating</input>
+  <input globalname="Wildfire/HazardRating/Bark ratings selection">Low</input>
+  <input globalname="Wildfire/HazardRating/Near-surface fuel hazard rating">2</input>
+  <input globalname="Wildfire/HazardRating/Surface fuel hazard rating">4</input>
+  <input globalname="Wildfire/HazardScore/Bark hazard score">0</input>
+  <input globalname="Wildfire/HazardScore/Near-surface fuel hazard score">1.9999999999999991</input>
+  <input globalname="Wildfire/HazardScore/Near-surface fuel height">50</input>
+  <input globalname="Wildfire/HazardScore/Surface fuel hazard score">2.9999999999999996</input>
+  <input globalname="Wind height selection">10 metres</input>
+  <input globalname="Wind reduction factor">3</input>
+ </globalNameValues>
+ <meteorologyData weatherTable="DateTime,Temperature,Humidity,WindSpeed10m,WindDirection,CloudPercent,Source,Notes&#xa;19/12/2021 04:00,23.899999999999999,24.199999999999999,16,36,0,,&#xa;19/12/2021 05:00,23.600000000000001,24.399999999999999,13,312,0,,&#xa;19/12/2021 06:00,22.699999999999999,27.300000000000001,16,336,0,,&#xa;19/12/2021 07:00,23,28.199999999999999,25,2,0,,&#xa;19/12/2021 08:00,25.300000000000001,26,32,0,0,,&#xa;19/12/2021 09:00,27.699999999999999,28,27,328,0,,&#xa;19/12/2021 10:00,28.899999999999999,31.899999999999999,42,328,0,,&#xa;19/12/2021 11:00,29.100000000000001,35.100000000000001,43,326,0,,&#xa;19/12/2021 12:00,29.100000000000001,39,45,292,0,,&#xa;19/12/2021 13:00,29.100000000000001,38.200000000000003,40,285,0,,&#xa;19/12/2021 14:00,30.800000000000001,35.799999999999997,42,277,0,,&#xa;19/12/2021 15:00,31.100000000000001,29.899999999999999,37,258,0,,&#xa;19/12/2021 16:00,32.399999999999999,25.100000000000001,37,261,0,,&#xa;19/12/2021 17:00,32.299999999999997,22.5,34,243,0,,&#xa;19/12/2021 18:00,31.399999999999999,21.800000000000001,37,237,0,,&#xa;19/12/2021 19:00,30.100000000000001,21.800000000000001,37,226,0,,&#xa;19/12/2021 20:00,27.199999999999999,25.600000000000001,33,215,0,,&#xa;19/12/2021 21:00,24.600000000000001,25.800000000000001,34,210,0,,&#xa;19/12/2021 22:00,21.899999999999999,28.899999999999999,33,210,0,,&#xa;19/12/2021 23:00,19.699999999999999,31.5,29,205,0,,&#xa;20/12/2021 00:00,18.899999999999999,32.399999999999999,24,203,0,,&#xa;20/12/2021 01:00,17.699999999999999,34.899999999999999,24,200,0,,&#xa;20/12/2021 02:00,16.399999999999999,37.600000000000001,21,197,0,,&#xa;20/12/2021 03:00,15.4,41.299999999999997,18,193,0,,&#xa;20/12/2021 04:00,14.5,44.700000000000003,15,190,0,,&#xa;20/12/2021 05:00,13.5,48.299999999999997,15,189,0,,&#xa;20/12/2021 06:00,12.5,53.100000000000001,14,185,0,,&#xa;20/12/2021 07:00,13.4,50.399999999999999,16,181,0,,&#xa;20/12/2021 08:00,15.800000000000001,44.100000000000001,21,178,0,,&#xa;20/12/2021 09:00,17.100000000000001,39.799999999999997,14,177,0,,&#xa;20/12/2021 10:00,19,33.600000000000001,18,176,0,,&#xa;20/12/2021 11:00,20.5,29.899999999999999,16,166,0,,&#xa;20/12/2021 12:00,22.300000000000001,25.699999999999999,15,169,0,,&#xa;20/12/2021 13:00,24,22.199999999999999,14,185,0,,&#xa;20/12/2021 14:00,26,18.800000000000001,13,199,0,,&#xa;20/12/2021 15:00,27.5,16.600000000000001,11,204,0,,&#xa;20/12/2021 16:00,28.5,16,12,209,0,,&#xa;20/12/2021 17:00,29.199999999999999,15.300000000000001,11,212,0,,&#xa;20/12/2021 18:00,29.100000000000001,15.9,11,211,0,,&#xa;20/12/2021 19:00,29.100000000000001,16.199999999999999,10,208,0,,&#xa;20/12/2021 20:00,28.300000000000001,17.699999999999999,8,202,0,,&#xa;20/12/2021 21:00,25.399999999999999,26.199999999999999,6,207,0,,&#xa;20/12/2021 22:00,22.800000000000001,30.800000000000001,6,197,0,,&#xa;20/12/2021 23:00,20.899999999999999,34.899999999999999,5,188,0,,&#xa;21/12/2021 00:00,19.899999999999999,38.399999999999999,5,190,0,,&#xa;21/12/2021 01:00,18.5,42.5,6,267,0,,&#xa;21/12/2021 02:00,17.199999999999999,47.399999999999999,6,245,0,,&#xa;21/12/2021 03:00,16.300000000000001,50.200000000000003,6,226,0,,&#xa;21/12/2021 04:00,15.5,54.299999999999997,6,216,0,,&#xa;21/12/2021 05:00,14.5,62.399999999999999,9,188,0,,&#xa;21/12/2021 06:00,13.9,65.299999999999997,10,189,0,,&#xa;21/12/2021 07:00,15.800000000000001,58.600000000000001,12,178,0,,&#xa;21/12/2021 08:00,19.100000000000001,48.200000000000003,16,183,0,,&#xa;21/12/2021 09:00,21.800000000000001,42,10,179,0,,&#xa;21/12/2021 10:00,24.5,33.100000000000001,14,158,0,,&#xa;21/12/2021 11:00,26.899999999999999,27.899999999999999,11,153,0,,&#xa;21/12/2021 12:00,28,25,11,162,0,,&#xa;21/12/2021 13:00,29.5,22,11,198,0,,&#xa;21/12/2021 14:00,31.399999999999999,18.600000000000001,11,208,0,,&#xa;21/12/2021 15:00,32.399999999999999,16.5,9,212,0,,&#xa;21/12/2021 16:00,33.299999999999997,15.6,11,216,0,,&#xa;21/12/2021 17:00,34,14.5,10,218,0,,&#xa;21/12/2021 18:00,33.5,15.300000000000001,12,205,0,,&#xa;21/12/2021 19:00,33.299999999999997,15.4,11,202,0,,&#xa;21/12/2021 20:00,32.200000000000003,17.600000000000001,11,206,0,,&#xa;21/12/2021 21:00,29.100000000000001,23.399999999999999,9,199,0,,&#xa;21/12/2021 22:00,26.600000000000001,28,8,192,0,,&#xa;21/12/2021 23:00,24.5,31.5,7,185,0,,&#xa;22/12/2021 00:00,23.600000000000001,34,7,182,0,,&#xa;22/12/2021 01:00,22.5,35.600000000000001,9,196,0,,&#xa;22/12/2021 02:00,21.600000000000001,37.299999999999997,11,179,0,,&#xa;22/12/2021 03:00,20.600000000000001,41.600000000000001,11,177,0,,&#xa;22/12/2021 04:00,20,45,12,181,0,,&#xa;22/12/2021 05:00,19.199999999999999,49.299999999999997,16,184,0,,&#xa;22/12/2021 06:00,18.300000000000001,51.799999999999997,17,182,0,,&#xa;22/12/2021 07:00,19,48.899999999999999,18,176,0,,&#xa;22/12/2021 08:00,21.399999999999999,43,22,179,0,,&#xa;22/12/2021 09:00,23.5,40,15,167,0,,&#xa;22/12/2021 10:00,25.899999999999999,34.200000000000003,20,164,0,,&#xa;22/12/2021 11:00,28.100000000000001,30,18,165,0,,&#xa;22/12/2021 12:00,29.800000000000001,26.199999999999999,17,170,0,,&#xa;22/12/2021 13:00,31.399999999999999,22.5,18,194,0,,&#xa;22/12/2021 14:00,33.100000000000001,18.800000000000001,18,198,0,,&#xa;22/12/2021 15:00,34,16.100000000000001,17,200,0,,&#xa;22/12/2021 16:00,34.5,14.9,19,202,0,,&#xa;22/12/2021 17:00,34.700000000000003,13.699999999999999,19,203,0,,&#xa;22/12/2021 18:00,34,14.300000000000001,21,204,0,,&#xa;22/12/2021 19:00,33.399999999999999,14.5,19,204,0,,&#xa;22/12/2021 20:00,31.899999999999999,16,17,204,0,,&#xa;22/12/2021 21:00,29.199999999999999,19.300000000000001,15,198,0,,&#xa;22/12/2021 22:00,26.800000000000001,23.5,14,191,0,,&#xa;22/12/2021 23:00,24.899999999999999,26.800000000000001,12,185,0,,&#xa;23/12/2021 00:00,24.100000000000001,27.300000000000001,12,175,0,,&#xa;23/12/2021 01:00,23,28.199999999999999,14,177,0,,&#xa;23/12/2021 02:00,21.800000000000001,30.100000000000001,14,180,0,,&#xa;23/12/2021 03:00,20.399999999999999,36.200000000000003,14,173,0,,&#xa;23/12/2021 04:00,19.300000000000001,43.600000000000001,14,171,0,,&#xa;23/12/2021 05:00,18.5,49.399999999999999,16,168,0,,&#xa;23/12/2021 06:00,17.300000000000001,51.799999999999997,17,174,0,,&#xa;23/12/2021 07:00,17.699999999999999,48.5,19,156,0,,&#xa;23/12/2021 08:00,20,41.5,24,157,0,,&#xa;23/12/2021 09:00,22.100000000000001,37.5,17,161,0,,&#xa;23/12/2021 10:00,24.600000000000001,31.300000000000001,22,163,0,,&#xa;23/12/2021 11:00,26.699999999999999,28.100000000000001,20,159,0,,&#xa;23/12/2021 12:00,28.600000000000001,23.800000000000001,20,164,0,,&#xa;23/12/2021 13:00,30.199999999999999,19.899999999999999,20,178,0,,&#xa;23/12/2021 14:00,32.100000000000001,16.100000000000001,20,176,0,,&#xa;23/12/2021 15:00,33,14.1,18,176,0,,&#xa;23/12/2021 16:00,33.600000000000001,12.800000000000001,19,179,0,,&#xa;23/12/2021 17:00,33.799999999999997,11.6,19,177,0,,&#xa;23/12/2021 18:00,33.200000000000003,11.800000000000001,21,173,0,,&#xa;23/12/2021 19:00,32.700000000000003,12,19,176,0,,&#xa;23/12/2021 20:00,31.100000000000001,14.300000000000001,17,170,0,,&#xa;23/12/2021 21:00,28.5,17.699999999999999,14,169,0,,&#xa;23/12/2021 22:00,26.199999999999999,22,12,172,0,,&#xa;23/12/2021 23:00,24.300000000000001,25.5,11,169,0,,&#xa;24/12/2021 00:00,24.100000000000001,26,10,153,0,,&#xa;24/12/2021 01:00,22.800000000000001,27.699999999999999,12,152,0,,&#xa;24/12/2021 02:00,21.600000000000001,29.600000000000001,13,151,0,,&#xa;24/12/2021 03:00,20.300000000000001,32.100000000000001,11,151,0,,&#xa;24/12/2021 04:00,19.5,34,10,149,0,,&#xa;24/12/2021 05:00,18.800000000000001,34.5,11,145,0,,&#xa;24/12/2021 06:00,18.100000000000001,37.299999999999997,12,142,0,,&#xa;24/12/2021 07:00,19.199999999999999,35.799999999999997,14,141,0,,&#xa;24/12/2021 08:00,22,31.5,19,138,0,,&#xa;24/12/2021 09:00,24.300000000000001,28,12,136,0,,&#xa;24/12/2021 10:00,26.899999999999999,23.199999999999999,16,138,0,,&#xa;24/12/2021 11:00,28.800000000000001,20.399999999999999,13,136,0,,&#xa;24/12/2021 12:00,30.800000000000001,17.600000000000001,13,141,0,,&#xa;24/12/2021 13:00,32.600000000000001,15.300000000000001,13,145,0,,&#xa;24/12/2021 14:00,34.299999999999997,13.4,13,150,0,,&#xa;24/12/2021 15:00,35.399999999999999,12.1,11,154,0,,&#xa;24/12/2021 16:00,36.100000000000001,11.4,12,159,0,,&#xa;24/12/2021 17:00,36.600000000000001,10.800000000000001,11,164,0,,&#xa;24/12/2021 18:00,36,11.300000000000001,12,157,0,,&#xa;24/12/2021 19:00,35.5,11.5,11,154,0,,&#xa;24/12/2021 20:00,34,12.6,9,152,0,,&#xa;24/12/2021 21:00,30.800000000000001,16.300000000000001,8,150,0,,&#xa;24/12/2021 22:00,28.5,19.399999999999999,9,148,0,,&#xa;24/12/2021 23:00,26.699999999999999,22,9,145,0,,&#xa;25/12/2021 00:00,26,23.399999999999999,9,131,0,,&#xa;25/12/2021 01:00,24.800000000000001,25,10,122,0,,&#xa;25/12/2021 02:00,23.800000000000001,26.699999999999999,10,123,0,,&#xa;25/12/2021 03:00,22.5,32.700000000000003,10,121,0,,&#xa;25/12/2021 04:00,21.600000000000001,38.399999999999999,9,119,0,,&#xa;25/12/2021 05:00,20.699999999999999,44.899999999999999,9,117,0,,&#xa;25/12/2021 06:00,20.600000000000001,46.399999999999999,9,113,0,,&#xa;25/12/2021 07:00,22.199999999999999,42.700000000000003,10,111,0,,&#xa;25/12/2021 08:00,25.5,35.700000000000003,14,98,0,,&#xa;25/12/2021 09:00,28.399999999999999,31.800000000000001,10,79,0,,&#xa;25/12/2021 10:00,31.399999999999999,24.699999999999999,16,61,0,,&#xa;25/12/2021 11:00,33.899999999999999,20.300000000000001,17,56,0,,&#xa;25/12/2021 12:00,35.399999999999999,18.5,17,90,0,,&#xa;25/12/2021 13:00,36.600000000000001,16.899999999999999,18,117,0,,&#xa;25/12/2021 14:00,37.600000000000001,14.9,19,131,0,,&#xa;25/12/2021 15:00,38,14.199999999999999,17,176,0,,&#xa;25/12/2021 16:00,38.600000000000001,13.4,18,188,0,,&#xa;25/12/2021 17:00,38.600000000000001,13.1,17,195,0,,&#xa;25/12/2021 18:00,37.799999999999997,13.6,19,191,0,,&#xa;25/12/2021 19:00,37,14.300000000000001,16,185,0,,&#xa;25/12/2021 20:00,35.399999999999999,16.300000000000001,15,175,0,,&#xa;25/12/2021 21:00,32.799999999999997,19.899999999999999,14,175,0,,&#xa;25/12/2021 22:00,30.399999999999999,23.899999999999999,14,155,0,,&#xa;25/12/2021 23:00,28.699999999999999,27.699999999999999,15,152,0,,&#xa;26/12/2021 00:00,26.899999999999999,32,14,160,0,,&#xa;26/12/2021 01:00,25.199999999999999,35.399999999999999,15,190,0,,&#xa;"/>
+ <scenarioData scenarioCount="2">
+  <scenario description="" type="DryEucalyptWildfireFuelHazardScore" name="Native forest - dry eucalypt (wildfire conditions)">
+   <fuel type="EucalyptFuelHazardType" value="Fuel hazard score"/>
+   <fuel type="EucalyptSurfaceFHS" value="3"/>
+   <fuel type="EucalyptSurfaceFHR" value="Very High"/>
+   <fuel type="EucalyptNearSurfaceFHS" value="2"/>
+   <fuel type="EucalyptNearSurfaceFHR" value="High"/>
+   <fuel type="EucalyptBarkHS" value="0"/>
+   <fuel type="EucalyptBarkHR" value="Low"/>
+   <fuel type="EucalyptElevatedFuelHeight" value="1"/>
+   <fuel type="ForestFuelLoad" value="12.5"/>
+   <fuel type="EucalyptNearSurfaceFuelHeight" value="50"/>
+   <fuel type="MeasuredForestFMCToggle" value="false"/>
+   <fuel type="MeasuredForestFMC" value="7"/>
+   <fuel type="WildfireToggle" value="true"/>
+   <fuel type="PlotToggle" value="true"/>
+  </scenario>
+  <scenario description="" type="DryEucalyptWildfireFuelHazardRating" name="Native forest - dry eucalypt (wildfire conditions) fhr">
+   <fuel type="EucalyptFuelHazardType" value="Fuel hazard rating"/>
+   <fuel type="EucalyptSurfaceFHS" value="3"/>
+   <fuel type="EucalyptSurfaceFHR" value="High"/>
+   <fuel type="EucalyptNearSurfaceFHS" value="2"/>
+   <fuel type="EucalyptNearSurfaceFHR" value="Moderate"/>
+   <fuel type="EucalyptBarkHS" value="0"/>
+   <fuel type="EucalyptBarkHR" value="Low"/>
+   <fuel type="EucalyptElevatedFuelHeight" value="1"/>
+   <fuel type="ForestFuelLoad" value="12.5"/>
+   <fuel type="EucalyptNearSurfaceFuelHeight" value="50"/>
+   <fuel type="MeasuredForestFMCToggle" value="false"/>
+   <fuel type="MeasuredForestFMC" value="7"/>
+   <fuel type="WildfireToggle" value="true"/>
+   <fuel type="PlotToggle" value="true"/>
+  </scenario>
+ </scenarioData>
+</project>

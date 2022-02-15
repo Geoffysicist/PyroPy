@@ -62,6 +62,15 @@ def test_run_forest_vesta(mock_incident):
     mock_incident.run_forest_vesta()
     assert 'fros_vesta' in mock_incident.df.columns.values
 
+def test_run_forest_vesta_fhr(mock_incident):
+    forest_vesta_params = {
+        'fhr_surf': 'H',
+        'fhr_n_surf': 'M',
+    }
+    mock_incident.set_params(forest_vesta_params)
+    mock_incident.run_forest_vesta_fhr()
+    assert 'fros_vesta_fhr' in mock_incident.df.columns.values
+
 
 @pytest.fixture
 def mock_incident(mock_weather):
@@ -75,21 +84,21 @@ def mock_incident(mock_weather):
     }
     mock_incident.set_params(forest_params)
     mock_incident.run_forest_mk5()
-    mock_incident.run_forest_vesta()
+    # mock_incident.run_forest_vesta()
 
     return mock_incident
 
 
 def test_get_models(mock_incident):
-    assert set(['forest_mk5', 'forest_vesta']).issubset(
+    assert set(['forest_mk5']).issubset(
             set(mock_incident.get_models())
         )
 
 def test_compare_fbcalc(mock_incident):
     calc_fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
-    models = ['mk5', 'vesta']
+    models = ['vesta']
     mock_incident.compare_fbcalc(calc_fn, models)
-    assert set(['mk5_fbcalc','vesta_fbcalc']).issubset(
+    assert set(['fros_vesta','vesta_fbcalc']).issubset(
         set(mock_incident.df.columns.values)
     )
     
