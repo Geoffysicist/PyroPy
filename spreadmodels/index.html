@@ -334,17 +334,16 @@ CSIRO Land &amp; Water and AFAC, Melbourne, Vic 125 pp. </p>
 <p>Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.</p>
 <p>All spread models take a pandas weather dataframe and model specific 
 parmeters as arguments.</p>
-<p>The weather dataframe must include the following fields (column headings)
-as a minimum:</p>
-<pre><code>    'date_time': a pandas datetime field
-    'temp': Air temerature (°C)
-    'humidity': Relative humidity (%)
-    'wind_speed': 10 m wind speed (km/h)
-    'wind_dir': Wind direction (°)
+<p>The weather dataframe must include the following exact fields (column headings):</p>
+<pre><code>    date_time: a pandas datetime field
+    temp: Air temerature (°C)
+    humidity: Relative humidity (%)
+    wind_speed: 10 m wind speed (km/h)
+    wind_dir: Wind direction (°)
 </code></pre>
-<p>Ideally the weather dataframe should include a drought factor (<code>'drought'</code>)
-though this can be added as a parameter.</p>
-<p>See the <code>weatherdata</code> module provides functions for reading <code>*.csv</code> files into 
+<p>Ideally the weather dataframe should include a drought factor though this
+can be added as a parameter. TODO add error checking for this!</p>
+<p>The <code>weather</code> module provides function for reading <code>*.csv</code> files into 
 dataframes from standard sources</p>
 
 

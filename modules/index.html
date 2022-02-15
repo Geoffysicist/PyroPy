@@ -319,6 +319,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pyropy.weatherdata.fbcalcs_to_df" class="md-nav__link">
+    fbcalcs_to_df()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.weatherdata.gridded_to_df" class="md-nav__link">
     gridded_to_df()
   </a>
@@ -361,8 +368,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.firebehaviour.Incident.compare_fba_calc" class="md-nav__link">
-    compare_fba_calc()
+  <a href="#pyropy.firebehaviour.Incident.compare_fbcalc" class="md-nav__link">
+    compare_fbcalc()
   </a>
   
 </li>
@@ -410,8 +417,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.firebehaviour.Incident.update_params" class="md-nav__link">
-    update_params()
+  <a href="#pyropy.firebehaviour.Incident.set_fbcalc" class="md-nav__link">
+    set_fbcalc()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.set_params" class="md-nav__link">
+    set_params()
   </a>
   
 </li>
@@ -539,6 +553,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pyropy.weatherdata.fbcalcs_to_df" class="md-nav__link">
+    fbcalcs_to_df()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.weatherdata.gridded_to_df" class="md-nav__link">
     gridded_to_df()
   </a>
@@ -581,8 +602,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.firebehaviour.Incident.compare_fba_calc" class="md-nav__link">
-    compare_fba_calc()
+  <a href="#pyropy.firebehaviour.Incident.compare_fbcalc" class="md-nav__link">
+    compare_fbcalc()
   </a>
   
 </li>
@@ -630,8 +651,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.firebehaviour.Incident.update_params" class="md-nav__link">
-    update_params()
+  <a href="#pyropy.firebehaviour.Incident.set_fbcalc" class="md-nav__link">
+    set_fbcalc()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.set_params" class="md-nav__link">
+    set_params()
   </a>
   
 </li>
@@ -683,17 +711,16 @@ CSIRO Land &amp; Water and AFAC, Melbourne, Vic 125 pp. </p>
 <p>Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.</p>
 <p>All spread models take a pandas weather dataframe and model specific 
 parmeters as arguments.</p>
-<p>The weather dataframe must include the following fields (column headings)
-as a minimum:</p>
-<pre><code>    'date_time': a pandas datetime field
-    'temp': Air temerature (°C)
-    'humidity': Relative humidity (%)
-    'wind_speed': 10 m wind speed (km/h)
-    'wind_dir': Wind direction (°)
+<p>The weather dataframe must include the following exact fields (column headings):</p>
+<pre><code>    date_time: a pandas datetime field
+    temp: Air temerature (°C)
+    humidity: Relative humidity (%)
+    wind_speed: 10 m wind speed (km/h)
+    wind_dir: Wind direction (°)
 </code></pre>
-<p>Ideally the weather dataframe should include a drought factor (<code>'drought'</code>)
-though this can be added as a parameter.</p>
-<p>See the <code>weatherdata</code> module provides functions for reading <code>*.csv</code> files into 
+<p>Ideally the weather dataframe should include a drought factor though this
+can be added as a parameter. TODO add error checking for this!</p>
+<p>The <code>weather</code> module provides function for reading <code>*.csv</code> files into 
 dataframes from standard sources</p>
 
 
@@ -1225,6 +1252,60 @@ df_to_amicus(fn)
 
 
 
+<h3 id="pyropy.weatherdata.fbcalcs_to_df" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">fbcalcs_to_df</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Reads weather data from FireBehaviourCalcs xlsm.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>fn</code></td>
+        <td><code>str</code></td>
+        <td><p>the path to the FireBehaviourCalcs xlsm</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>DataFrame</code></td>
+      <td><p>a pandas <code>DataFrame</code> suitable for use in <code>spreadmodels.py</code></p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
 <h3 id="pyropy.weatherdata.gridded_to_df" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">gridded_to_df</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span></code>
 
@@ -1536,8 +1617,8 @@ Incident        </code>
 
 
 
-<h4 id="pyropy.firebehaviour.Incident.compare_fba_calc" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">compare_fba_calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></code>
+<h4 id="pyropy.firebehaviour.Incident.compare_fbcalc" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">compare_fbcalc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">models</span><span class="p">)</span></code>
 
 
 </h4>
@@ -1564,6 +1645,14 @@ to models already in the <code>Incident.df</code> </p>
         <td><code>fn</code></td>
         <td><code>str</code></td>
         <td><p>path to the FireBehaviourCalcs spreadsheet</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>model</code></td>
+        <td><code>list</code></td>
+        <td><p>a list of the models to compare. Valid items
+include: <code>'mk5'</code> McArthur mk5 model, <code>'vesta'</code> The Project 
+VESTA model</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
@@ -1778,8 +1867,64 @@ Defaults to False.</p></td>
 
 
 
-<h4 id="pyropy.firebehaviour.Incident.update_params" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">update_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></code>
+<h4 id="pyropy.firebehaviour.Incident.set_fbcalc" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_fbcalc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Writes the weather data and model parameters to a FireBehaviourCalc
+macro enabled spreadsheet.</p>
+<p><strong> WARNING! THE VALUES IN THE SPREADSHEET WILL BE OVERWRITTEN </strong></p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>fn</code></td>
+        <td><code>str</code></td>
+        <td><p>path to the FireBehaviourCalc spreadsheet. </p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>bool</code></td>
+      <td><p><code>True</code> f successful else <code>False</code></p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="pyropy.firebehaviour.Incident.set_params" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></code>
 
 
 </h4>
