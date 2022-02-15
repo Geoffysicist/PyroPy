@@ -343,6 +343,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.run_forest_vesta_fhr" class="md-nav__link">
+    run_forest_vesta_fhr()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.set_fbcalc" class="md-nav__link">
     set_fbcalc()
   </a>
@@ -402,6 +409,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.get_mc" class="md-nav__link">
+    get_mc()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.spreadmodels.ros_forest_mk5" class="md-nav__link">
     ros_forest_mk5()
   </a>
@@ -411,6 +425,13 @@
           <li class="md-nav__item">
   <a href="#pyropy.spreadmodels.ros_forest_vesta" class="md-nav__link">
     ros_forest_vesta()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.ros_forest_vesta_fhr" class="md-nav__link">
+    ros_forest_vesta_fhr()
   </a>
   
 </li>
@@ -939,6 +960,27 @@ Defaults to False.</p></td>
 
 
 
+<h4 id="pyropy.firebehaviour.Incident.run_forest_vesta_fhr" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_forest_vesta_fhr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Runs the Project Vesta (fuel hazard scores) model.</p>
+<p>Adds the results to the <code>Incident.df</code></p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h4 id="pyropy.firebehaviour.Incident.set_fbcalc" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">set_fbcalc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></code>
 
@@ -1245,6 +1287,61 @@ DataFrame</p></td>
 
 
 
+<h3 id="pyropy.spreadmodels.get_mc" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_mc</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Calculates the moisture content using equation 5.30</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>df</code></td>
+        <td><code>DataFrame</code></td>
+        <td><p>a pandas dataframe which must contain the specified the weather
+data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Series</code></td>
+      <td><p>the fine dead fuel moisture content (%)</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
 <h3 id="pyropy.spreadmodels.ros_forest_mk5" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">ros_forest_mk5</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">wrf</span><span class="p">,</span> <span class="n">fuel_load</span><span class="p">)</span></code>
 
@@ -1328,9 +1425,10 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
     <div class="doc doc-contents ">
 
-      <p>Forward Rate of Spread (FROS) from Project Vesta (fuel hazard scores)</p>
+      <p>Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
+scores</p>
 <p>Eqn: 5.28</p>
-<p>Application: Wildfire in Sclerophyll (Eucalypt) forests</p>
+<p>Application: </p>
 <p>Notes: Many FBAns feel that Vesta over predicts ROS unless conditions
 are severe and use McArthur 1973a Mk5 Forest Fire Danger Meter.</p>
 
@@ -1386,6 +1484,79 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
       <td><p>a pandas dataframe including the fields</p>
 <pre><code>`mc` the fuel moisture conent (%)
 `fros_vesta` the forward rate of spread (m/h)
+</code></pre></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyropy.spreadmodels.ros_forest_vesta_fhr" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">ros_forest_vesta_fhr</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fhr_surf</span><span class="p">,</span> <span class="n">fhr_n_surf</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Forward Rate of Spread (FROS) from Project Vesta using fuel hazard
+ratings</p>
+<p>Eqn: 5.31</p>
+<p>Application: Wildfire in Sclerophyll (Eucalypt) forests</p>
+<p>Notes: anything else about the model.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>df</code></td>
+        <td><code>DataFrame</code></td>
+        <td><p>a pandas dataframe which must contain the specified the weather
+data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>fhr_surf</code></td>
+        <td><code>str</code></td>
+        <td><p>Surface Fuel Hazard Rating (L, M, H, V, E)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>fhr_n_surf</code></td>
+        <td><code>str</code></td>
+        <td><p>Near Surface Fuel Hazard Rating (L, M, H, V, E)</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>DataFrame</code></td>
+      <td><p>a pandas dataframe including the fields</p>
+<pre><code>`fros_vesta_fhr` the forward rate of spread (m/h)
 </code></pre></td>
     </tr>
   </tbody>
