@@ -2,14 +2,9 @@ from pandas import DataFrame, Series
 import pytest
 import warnings
 from random import randrange
-# from openpyxl import worksheet
 
 from src.pyropy import firebehaviour as fb
 from src.pyropy import weatherdata as wd
-
-
-
-
 
 @pytest.fixture
 def mock_weather():
@@ -35,15 +30,15 @@ def test_check_params(mock_incident):
     params = {'foo': 15}
     with warnings.catch_warnings(record=True) as w:        
         mock_incident.check_params(params) 
-        assert 'not set - run update params' in str(w[-1].message)
+        assert 'not set - run set params' in str(w[-1].message)
 
 
-def test_update_params(mock_incident):
+def test_set_params(mock_incident):
     params = {
             'wrf': randrange(6),
             'fuel_load': randrange(25),
         }
-    mock_incident.update_params(params)
+    mock_incident.set_params(params)
     assert mock_incident.wrf == params['wrf']
     assert mock_incident.fuel_load == params['fuel_load']
 
@@ -53,7 +48,7 @@ def test_run_forest_mk5(mock_incident):
         'wrf': 3.5,
         'fuel_load': 15,
     }
-    mock_incident.update_params(forest_mk5_params)
+    mock_incident.set_params(forest_mk5_params)
     mock_incident.run_forest_mk5()
     assert 'fros_mk5' in mock_incident.df.columns.values
 
@@ -63,7 +58,7 @@ def test_run_forest_vesta(mock_incident):
         'fhs_n_surf': 2,
         'fuel_height_ns': 20
     }
-    mock_incident.update_params(forest_vesta_params)
+    mock_incident.set_params(forest_vesta_params)
     mock_incident.run_forest_vesta()
     assert 'fros_vesta' in mock_incident.df.columns.values
 
@@ -78,7 +73,7 @@ def mock_incident(mock_weather):
         'fhs_n_surf': 2,
         'fuel_height_ns': 20
     }
-    mock_incident.update_params(forest_params)
+    mock_incident.set_params(forest_params)
     mock_incident.run_forest_mk5()
     mock_incident.run_forest_vesta()
 
@@ -90,10 +85,18 @@ def test_get_models(mock_incident):
             set(mock_incident.get_models())
         )
 
-def test_compare_fba_calc(mock_incident):
+def test_compare_fbcalc(mock_incident):
     calc_fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
-    mock_incident.compare_fba_calc(calc_fn)
-    assert 'fros_vesta_calc' in mock_incident.df.columns.values
+    models = ['mk5', 'vesta']
+    mock_incident.compare_fbcalc(calc_fn, models)
+    assert set(['mk5_fbcalc','vesta_fbcalc']).issubset(
+        set(mock_incident.df.columns.values)
+    )
+    
+def test_set_fbcalc(mock_incident):
+    calc_fn = 'tests/.data/FireBehaviourCalcs_Test_out.xlsm'
+    ws = mock_incident.set_fbcalc(calc_fn)
+    assert ws is True
     
     
 

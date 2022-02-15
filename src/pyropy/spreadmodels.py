@@ -172,9 +172,6 @@ def get_FFDI(
 
     Returns:
         a pandas Series of FFDI.
-
-    Raises:
-        no errors 
     """
     if flank:
         wind_speed = 0

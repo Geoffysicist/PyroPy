@@ -46,6 +46,7 @@ df = gridded_to_df('your_file_path.csv')
 
 import pandas as pd
 from pandas import DataFrame
+from openpyxl import load_workbook
 
 if __name__ == '__main__':
     from helpers import check_filepath, check_encoding
@@ -138,9 +139,13 @@ def weather_to_df(
     #     df = df.drop(['wind_dir_cp'], axis='columns')
 
     # remove unused column names from the base dict
-    col_names = {key:val for key,val in FIELDS_BASE.items() if key in df.columns}
-
-    return df[col_names.keys()]
+    return_cols = list(FIELDS_BASE.keys())
+    return_cols.extend(
+        [key for key in ['drought', 'ffd','gfdi'] if key in col_names.values()]
+    )
+    return_cols = [key for key in return_cols if key in df.columns]
+    
+    return df[return_cols]
 
 def gridded_to_df(fn: str, header: int = 6) -> DataFrame:
     """Reads BoM gridded weather forecast or observations into a pandas 
@@ -168,6 +173,39 @@ def gridded_to_df(fn: str, header: int = 6) -> DataFrame:
         a pandas DataFrame with the columns defined in `FIELDS_GRIDDED`
     """
     return weather_to_df(fn, header = header, col_names = FIELDS_GRIDDED, datetime_format="%d/%m/%Y %H:%M")
+
+def fbcalcs_to_df(fn: str) -> DataFrame:
+    """Reads weather data from FireBehaviourCalcs xlsm.
+
+    Args:
+        fn: the path to the FireBehaviourCalcs xlsm
+
+    Returns:
+        a pandas `DataFrame` suitable for use in `spreadmodels.py`
+    """
+    fields = {
+        'date': 'B',
+        'time': 'C',
+        'temp': 'D',
+        'humidity': 'E',
+        'wind_speed': 'G',
+        'wind_dir': 'F',
+        'drought': 'H'
+    }
+
+    df = pd.DataFrame()
+
+    if check_filepath(fn, suffix='xlsm'):
+        wb = load_workbook(fn, data_only=True)
+        ws = wb['Weather_Site']
+        for field, col in fields.items():
+            data = ws[col][11:]
+            data = [cell.value for cell in data if isinstance(
+                    cell.value, (float, int)
+                )]
+            df[field] = data
+    
+    return df
 
 def df_to_weather(df: DataFrame, fn: str, col_names = FIELDS_BASE, datetime_format="%Y%m%d %H:%M", encoding=None) -> DataFrame:
     """"Creates a weather `DataFrame` containing the fields in `col_names`.
