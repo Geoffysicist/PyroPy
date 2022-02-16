@@ -6,12 +6,15 @@ Defines the classes used to analyse fire behaviour with PyroPy.
 
 from dataclasses import dataclass
 import warnings
-from pandas import DataFrame
+from openpyxl import load_workbook
+from pandas import DataFrame, read_csv
 
 if __name__ == '__main__':
-    import spreadmodels as fs
+    import spreadmodels as fbs
+    import helpers as fbh
 else:
-    from . import spreadmodels as fs
+    from . import spreadmodels as fbs
+    from . import helpers as fbh
 
 class Incident(object):
     """A wildfire incident.
@@ -32,6 +35,19 @@ class Incident(object):
         self.fhs_surf = None
         self.fhs_n_surf = None 
         self.fuel_height_ns = None
+        self.fhr_surf = None
+        self.fhr_n_surf = None
+
+        self.fbcalc_params_mk5 = {
+            'wrf': 'J4',
+            'fuel_load': 'C4', 
+        }
+
+        self.fbcalc_params_vesta = {
+            'fhs_surf': 'D6',
+            'fhs_n_surf': 'D7',
+            'fuel_height_ns': 'C8',
+        }
 
     
     def get_params(self) -> dict:
@@ -42,9 +58,11 @@ class Incident(object):
         """
         params = list(self.__dict__.items())
         params = dict(params[1:]) #drop the dataframe
-        params = {key: val for key, val in params.items() if val}
+        params = {
+            key: val for key, val in params.items() 
+            if isinstance(val,(int,float,str))
+        }
         return params
-
 
     def get_df(self) -> DataFrame:
         """
@@ -54,7 +72,23 @@ class Incident(object):
         """
         return self.df
 
-    def update_params(self, params: dict) -> None:
+    def get_models(self) -> list:
+        """
+
+        Returns:
+            list: a list of the models that have been run for the Incident
+        """
+        models = {
+            'forest_mk5': 'fros_mk5',
+            'forest_vesta': 'fros_vesta',
+        }
+
+        return [
+            key for key, val in models.items() 
+            if val in self.df.columns.values
+        ]
+
+    def set_params(self, params: dict) -> None:
         """Update several model parameters using a dictionary.
 
         The dictionary keys must match the name of the parameter.
@@ -75,7 +109,7 @@ class Incident(object):
             'fuel_load': self.fuel_load,
         }
         if self.check_params(forest_mk5_params):
-            self.df = fs.ros_forest_mk5(self.df, self.wrf, self.fuel_load)
+            self.df = fbs.ros_forest_mk5(self.df, self.wrf, self.fuel_load)
 
     def run_forest_vesta(self) -> None:
         """Runs the Project Vesta (fuel hazard scores) model.
@@ -88,15 +122,33 @@ class Incident(object):
             'fuel_height_ns': self.fuel_height_ns,
         }
 
+
         if self.check_params(forest_vesta_params):
-            self.df = fs.ros_forest_vesta(
+            self.df = fbs.ros_forest_vesta(
                 self.df, 
                 self.fhs_surf, 
                 self.fhs_n_surf, 
                 self.fuel_height_ns,
             )
 
-    def print(self, head=False):
+    def run_forest_vesta_fhr(self) -> None:
+        """Runs the Project Vesta (fuel hazard scores) model.
+
+        Adds the results to the `Incident.df`
+        """
+        forest_vesta_params = {
+            'fhr_surf': self.fhr_surf,
+            'fhr_n_surf': self.fhr_n_surf,
+        }
+
+        if self.check_params(forest_vesta_params):
+            self.df = fbs.ros_forest_vesta_fhr(
+                self.df, 
+                self.fhr_surf, 
+                self.fhr_n_surf, 
+            )
+
+    def print(self, head=False) -> None:
         """Prints the field headings and rows of the `Dataframe`
 
         Args:
@@ -117,13 +169,133 @@ class Incident(object):
                 else `False`
         """
         incident_params = self.get_params()
-        # for key, val in params.items():
-        #     if not incident_params[key]:
         for key in params.keys():
             if not key in incident_params.keys():
-                warnings.warn(f'{key} not set - run update params')
+                warnings.warn(f'{key} not set - run set params')
                 return False
         return True
+
+    def compare_fbcalc(self, fn: str, models: list) -> None:
+        """Loads results from an FireBehaviourCalcs spreadsheet into the 
+        `Incident.df`.
+
+        Only loads the pages from FireBehaviourCalcs that have correspond 
+        to models then adds fros values to `Incident.df` in the form 
+        `'fros_{model}_fbcalc'` 
+
+        Args:
+            fn (str): path to the FireBehaviourCalcs spreadsheet
+            model (list): a list of the models to compare. Valid items
+                include: `'mk5'` McArthur mk5 model, `'vesta'` The Project 
+                VESTA model. Also there is a little easter egg here and if you 
+                put 'mc' as the model it will get the moisture content (%)
+                from the VESTA model.
+
+        Returns:
+            None:
+        """
+        fbcalc_refs = {
+            'mk5': ['Forest(McArthur)', 'O', self.fbcalc_params_mk5],
+            'vesta': ['Forest(VESTA)', 'P', self.fbcalc_params_vesta],
+            'mc': ['Forest(VESTA)', 'M', {}],
+        }
+
+        run_model_functions = {
+            'mk5': self.run_forest_mk5,
+            'vesta': self.run_forest_vesta,
+        }
+
+        if fbh.check_filepath(fn, suffix='xlsm'):
+            wb = load_workbook(fn, data_only=True) #, keep_vba=True
+            for model, ref in fbcalc_refs.items():
+                if model in models:
+                    sheet_name, column, model_params = ref
+                    ws = wb[sheet_name]
+                    column = ws[column]
+                    ros_vals =  [cell.value for cell in column if isinstance(
+                            cell.value, (float, int)
+                        )]
+                    self.df[f'fros_{model}_fbcalc'] = ros_vals
+                    self.df[f'fros_{model}_fbcalc'] = self.df[f'fros_{model}_fbcalc'].astype(int)
+                    params = {param: ws[address].value 
+                        for (param, address) in model_params.items()
+                    }
+
+                    self.set_params(params)
+                    if model in run_model_functions.keys(): #trick it into getting columns that aren't models like mc
+                        run_model_functions[model]()            
+        return None
+
+    def compare_amicus(self, fn: str) -> None:
+        if fbh.check_filepath(fn, suffix='csv'):
+            print(fbh.check_encoding(fn))
+            df = read_csv(fn, header=0, encoding=fbh.check_encoding(fn))
+            self.df['mc_amicus'] = df['Predicted FMC (%)']
+            self.df['fros_vesta_amicus'] = df['Rate of spread (m/h)']
+        pass
+
+    def set_fbcalc(self, fn: str) -> bool:
+        """Writes the weather data and model parameters to a FireBehaviourCalc
+        macro enabled spreadsheet.
+
+        ** WARNING! THE VALUES IN THE SPREADSHEET WILL BE OVERWRITTEN **
+
+        Spreadsheet macros will not run (ie changes will not take place in 
+        the spreadsheet) until you open it and click on the relevant sheets.
+
+        Args:
+            fn (str): path to the FireBehaviourCalc spreadsheet. 
+                 
+        
+        Returns:
+            `True` f successful else `False`
+        """
+
+        models = {
+            'forest_mk5': ['Forest(McArthur)', self.fbcalc_params_mk5],
+            'forest_vesta': ['Forest(VESTA)', self.fbcalc_params_vesta],
+        }
+
+        if fbh.check_filepath(fn, suffix='xlsm'):
+            datetime_format: str = "%d/%m/%Y %H:%M"
+            # weather = self.df.iloc[:, 0:6]
+            weather = self.df.copy(deep=True)
+            weather['date'] = weather['date_time'].dt.strftime(datetime_format.split()[0])
+            weather['time'] = weather['date_time'].dt.strftime(datetime_format.split()[1])
+            # re-order and remove unwanted cols
+            weather_cols = ['date', 'time', 'temp', 'humidity', 'wind_dir', 'wind_speed', 'drought']
+            weather = weather[weather_cols]
+
+            wb = load_workbook(fn, read_only=False, keep_vba=True)
+
+            #load weather data to fbcalc
+            ws = wb['Weather_Site']
+            row_ctr = 0
+            ws_weather_cols = [2,8]
+            ws_weather_rows = [12, 12+weather.shape[0]-1]
+            for row in ws.iter_rows(
+                min_col=ws_weather_cols[0],
+                max_col=ws_weather_cols[1],
+                min_row=ws_weather_rows[0],
+                max_row=ws_weather_rows[1],
+            ):
+                cell_ctr = 0
+                for cell in row:
+                    cell.value = weather.iloc[row_ctr, cell_ctr]
+                    cell_ctr += 1
+                row_ctr += 1
+
+            #load parameters to fbcalc
+            for model in self.get_models():
+                ws = wb[models[model][0]]
+                for param, addr in models[model][1].items():
+                    ws[addr] = self.__dict__[param]
+
+            return True
+
+        return False            
+
+
 
 if __name__ == '__main__':
     pass

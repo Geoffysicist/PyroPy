@@ -10,7 +10,14 @@ def test_weather_to_df():
 
 def test_gridded_to_df():
     fn = 'tests/.data/weather_gridded_in.csv'
-    assert type(wd.weather_to_df(fn)) is DataFrame
+    df = wd.gridded_to_df(fn)
+    assert type(df) is DataFrame
+    assert set(['temp', 'drought']).issubset(set(df.columns.values))
+    # assert len(df) == 100
+
+def test_fbcalcs_to_df():
+    fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
+    assert type(wd.fbcalcs_to_df(fn)) is DataFrame
 
 def test_df_to_weather():
     fn = 'tests/.data/weather_gridded_in.csv'

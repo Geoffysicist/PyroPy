@@ -31,7 +31,7 @@ def mock_incident():
     return fb.Incident(weather_df)
 
 
-def test_incident_to_calc(mock_incident):
-    fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
-    wb = helpers.incident_to_calc(mock_incident,fn)
-    assert type(wb) is Workbook
+# def test_incident_to_calc(mock_incident):
+#     fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
+#     wb = helpers.incident_to_calc(mock_incident,fn)
+#     assert type(wb) is Workbook
