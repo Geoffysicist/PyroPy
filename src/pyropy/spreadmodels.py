@@ -182,7 +182,152 @@ def ros_forest_vesta_fhr(
 
     return ros_df
 
+def ros_grass(
+    df: DataFrame, 
+    state: str,
+    curing: str,
+):
+    """Cheney et al. 1998 grass model.
+    Eqns: 3.5, 3.6, 3.11
 
+    Args:
+        curing: Curing level (%)
+        state: Grass state - natural (N), grazed (G), eaten out (E), (W) Woodlands, (F) Open forest
+    """
+    curing = max(20, curing)
+
+    # create the ros dataframe from the datetime
+    ros_df = df.copy(deep=True)
+    
+    # dead fuel moisture content from weather data Eqn 3.8
+    ros_df['mc_g'] = 9.58 - 0.205*ros_df['temp'] + 0.138 * ros_df['humidity']
+    
+    # fuel moisture coeff Eqn 3.7
+    ros_df['fm_coeff'] = np.where(
+        ros_df['mc_g'] < 12,
+        np.exp(-0.108*ros_df['mc_g']),
+        np.where(
+            ros_df['wind_speed'] < 10,
+            0.684 - 0.0342*ros_df['mc_g'],
+            0.547 - 0.0228*ros_df['mc_g']
+        )
+    )
+    
+    # curing coefficient from Eqn 3.10
+    curing_coeff = 1.036/(1+103.99*m.exp(-0.0996*(curing-20)))
+
+    #ros
+    if state in 'NWF':
+        # Eqn 3.5
+        ros_df['fros_grass'] = np.where(
+            ros_df['wind_speed'] > 5,
+            (1.4 + 0.838*(ros_df['wind_speed'] - 5)**0.844)*ros_df['fm_coeff']*curing_coeff,
+            (0.054 + 0.269*ros_df['wind_speed'])*ros_df['fm_coeff']*curing_coeff
+        )
+
+        if state == 'W':
+             ros_df['fros_grass'] = ros_df['fros_grass'] * 0.5
+        elif state == 'F':
+            ros_df['fros_grass'] = ros_df['fros_grass'] * 0.3
+        
+    elif state in 'GE':
+        # Eqn 3.6
+        ros_df['fros_grass'] = np.where(
+            ros_df['wind_speed'] > 5,
+            (1.1 + 0.715*(ros_df['wind_speed'] - 5)**0.844)*ros_df['fm_coeff']*curing_coeff,
+            (0.054 + 0.209*ros_df['wind_speed'])*ros_df['fm_coeff']*curing_coeff
+        )
+        if state == 'E':
+            # Cruz et al. argue that should be half of G but no studies
+            ros_df['fros_grass'] /= 2
+        
+    else:
+        raise ValueError('Not a valid grass state')
+
+    return ros_df
+
+def ros_mallee(
+    df: DataFrame,
+    cover: int,
+    height: float,
+) -> DataFrame:
+    """Cruz et al 2013 Semi-arid mallee heath.
+
+    Eqns: 4.17, 4.18
+
+    n = 61
+    wind_speed range 5 - 28 km/h
+    temp range 16 - 39 C
+    humidity range 7 - 80 %
+    total_fuel range 3.8 - 14.8 t/ha
+    explains 0.74 of variability 
+
+    Args:
+        height: overstory height (m)
+        cover: overstory cover (%)
+    
+    Returns:
+        `DataFrame` including `fros_mallee`, `mc_m`
+
+    """
+    
+    ros_df = df.copy(deep=True)
+
+    #set delta = 1 if between 12:00 and 17:00 Sep-Mar, else 0
+    ros_df['delta'] = 0
+    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month > 3, 1)
+    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month < 10, 1)
+    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour > 11, 0)
+    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour < 18, 0)
+    
+    ros_df['mc_m'] = (
+        4.74 
+        + 0.108*ros_df['humidity'] 
+        - 0.1*(ros_df['temp'] - 25)
+        - ros_df['delta']*(1.68+0.028*ros_df['humidity'])
+        )
+    ros_df['p_surface'] = (
+        1 
+        + np.exp(-(
+            14.62+0.207*ros_df['wind_speed']
+            -1.872*ros_df['mc_m']
+            -0.304*cover
+            ))
+        )**-1
+    ros_df['p_crown'] = (
+        1 
+        + np.exp(-(
+            -11.138
+            +1.4054*ros_df['wind_speed'] 
+            - 3.4217*ros_df['mc_m']
+            ))
+        )**-1
+    ros_df['fros_surface'] = (
+        3.337
+        *ros_df['wind_speed']
+        *np.exp(-0.1284*ros_df['mc_m'])
+        *height**-0.7073
+        )
+    ros_df['fros_crown'] = (
+        9.5751
+        *ros_df['wind_speed']
+        *np.exp(-0.1795*ros_df['mc_m'])
+        *(cover/100)**0.3589
+        )
+    # convert from m/min to km/h
+    ros_df['fros_surface'] = ros_df['fros_surface']*0.06
+    ros_df['fros_crown'] = ros_df['fros_crown']*0.06
+    ros_df['fros_mallee'] = np.where(
+        ros_df['p_surface'] < 0.5,
+        0,
+        (
+            (1-ros_df['p_crown'])*ros_df['fros_surface']
+            +ros_df['p_crown']*ros_df['fros_crown']
+            )
+    )
+    return ros_df
+
+########################################################################
 def spread_direction(df: DataFrame) -> Series:
     """ Converts wind direction to spread direction.
     

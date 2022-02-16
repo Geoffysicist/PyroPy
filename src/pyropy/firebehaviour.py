@@ -180,7 +180,8 @@ class Incident(object):
         `Incident.df`.
 
         Only loads the pages from FireBehaviourCalcs that have correspond 
-        to models already in the `Incident.df` 
+        to models then adds fros values to `Incident.df` in the form 
+        `'fros_{model}_fbcalc'` 
 
         Args:
             fn (str): path to the FireBehaviourCalcs spreadsheet
@@ -214,8 +215,8 @@ class Incident(object):
                     ros_vals =  [cell.value for cell in column if isinstance(
                             cell.value, (float, int)
                         )]
-                    self.df[f'{model}_fbcalc'] = ros_vals
-                    self.df[f'{model}_fbcalc'] = self.df[f'{model}_fbcalc'].astype(int)
+                    self.df[f'fros_{model}_fbcalc'] = ros_vals
+                    self.df[f'fros_{model}_fbcalc'] = self.df[f'fros_{model}_fbcalc'].astype(int)
                     params = {param: ws[address].value 
                         for (param, address) in model_params.items()
                     }
@@ -230,7 +231,7 @@ class Incident(object):
             print(fbh.check_encoding(fn))
             df = read_csv(fn, header=0, encoding=fbh.check_encoding(fn))
             self.df['mc_amicus'] = df['Predicted FMC (%)']
-            self.df['vesta_amicus'] = df['Rate of spread (m/h)']
+            self.df['fros_vesta_amicus'] = df['Rate of spread (m/h)']
         pass
 
     def set_fbcalc(self, fn: str) -> bool:

@@ -38,9 +38,9 @@ plugins:
         - import sys
         - sys.path.append('src')
         # uncomment the lines below when building
-        # - import shutil
-        # - shutil.copyfile('README.md', 'docs/index.md')
-        # - shutil.copyfile('LICENSE', 'docs/license.md')
+        - import shutil
+        - shutil.copyfile('README.md', 'docs/index.md')
+        - shutil.copyfile('LICENSE', 'docs/license.md')
         rendering:
           show_source: false
           show_root_toc_entry: false

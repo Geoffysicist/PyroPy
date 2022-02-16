@@ -98,7 +98,7 @@ def test_compare_fbcalc(mock_incident):
     calc_fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
     models = ['vesta']
     mock_incident.compare_fbcalc(calc_fn, models)
-    assert set(['fros_vesta','vesta_fbcalc']).issubset(
+    assert set(['fros_vesta','fros_vesta_fbcalc']).issubset(
         set(mock_incident.df.columns.values)
     )
     
