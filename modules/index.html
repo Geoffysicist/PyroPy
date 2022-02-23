@@ -271,8 +271,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.spreadmodels.get_mc" class="md-nav__link">
-    get_mc()
+  <a href="#pyropy.spreadmodels.get_mc_g" class="md-nav__link">
+    get_mc_g()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.get_mc_m" class="md-nav__link">
+    get_mc_m()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.get_mc_v" class="md-nav__link">
+    get_mc_v()
   </a>
   
 </li>
@@ -292,8 +306,29 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.ros_forest_vesta2" class="md-nav__link">
+    ros_forest_vesta2()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.spreadmodels.ros_forest_vesta_fhr" class="md-nav__link">
     ros_forest_vesta_fhr()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.ros_grass" class="md-nav__link">
+    ros_grass()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.ros_mallee" class="md-nav__link">
+    ros_mallee()
   </a>
   
 </li>
@@ -431,6 +466,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.run_forest_vesta2" class="md-nav__link">
+    run_forest_vesta2()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.run_forest_vesta_fhr" class="md-nav__link">
     run_forest_vesta_fhr()
   </a>
@@ -465,6 +507,54 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Examples
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Examples" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Examples
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/compare_mc/" class="md-nav__link">
+        Comparison of Fine Fuel Moisture Content functions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -526,8 +616,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.spreadmodels.get_mc" class="md-nav__link">
-    get_mc()
+  <a href="#pyropy.spreadmodels.get_mc_g" class="md-nav__link">
+    get_mc_g()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.get_mc_m" class="md-nav__link">
+    get_mc_m()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.get_mc_v" class="md-nav__link">
+    get_mc_v()
   </a>
   
 </li>
@@ -547,8 +651,29 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.ros_forest_vesta2" class="md-nav__link">
+    ros_forest_vesta2()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.spreadmodels.ros_forest_vesta_fhr" class="md-nav__link">
     ros_forest_vesta_fhr()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.ros_grass" class="md-nav__link">
+    ros_grass()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.spreadmodels.ros_mallee" class="md-nav__link">
+    ros_mallee()
   </a>
   
 </li>
@@ -681,6 +806,13 @@
           <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.run_forest_vesta" class="md-nav__link">
     run_forest_vesta()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.run_forest_vesta2" class="md-nav__link">
+    run_forest_vesta2()
   </a>
   
 </li>
@@ -859,15 +991,125 @@ DataFrame</p></td>
 
 
 
-<h3 id="pyropy.spreadmodels.get_mc" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_mc</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></code>
+<h3 id="pyropy.spreadmodels.get_mc_g" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_mc_g</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></code>
 
 
 </h3>
 
     <div class="doc doc-contents ">
 
-      <p>Calculates the moisture content using equation 5.30</p>
+      <p>Calculates the grass moisture content using equation 3.8</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>df</code></td>
+        <td><code>DataFrame</code></td>
+        <td><p>a pandas dataframe which must contain the specified the weather
+data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Series</code></td>
+      <td><p>the fine dead fuel moisture content (%)</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyropy.spreadmodels.get_mc_m" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_mc_m</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Calculates the mallee moisture content using equation 4.15</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>df</code></td>
+        <td><code>DataFrame</code></td>
+        <td><p>a pandas dataframe which must contain the specified the weather
+data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Series</code></td>
+      <td><p>the fine dead fuel moisture content (%)</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyropy.spreadmodels.get_mc_v" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_mc_v</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Calculates VESTA the moisture content using equation 5.30</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1070,6 +1312,87 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
 
 
+<h3 id="pyropy.spreadmodels.ros_forest_vesta2" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">ros_forest_vesta2</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">waf</span><span class="p">,</span> <span class="n">fuel</span><span class="p">,</span> <span class="n">height_u</span><span class="p">,</span> <span class="n">drought</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
+scores</p>
+<p>Eqn: 5.28</p>
+<p>Application: </p>
+<p>Notes: Many FBAns feel that Vesta over predicts ROS unless conditions
+are severe and use McArthur 1973a Mk5 Forest Fire Danger Meter.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>df</code></td>
+        <td><code>DataFrame</code></td>
+        <td><p>a pandas dataframe which must contain the specified the weather
+data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>fhs_surf</code></td>
+        <td></td>
+        <td><p>surface fuel hazard score (0-4)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>fhs_n_surf</code></td>
+        <td></td>
+        <td><p>near surface fuel hazard score (0-4)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>fuel_height_ns</code></td>
+        <td></td>
+        <td><p>near surface fuel height (cm)</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>DataFrame</code></td>
+      <td><p>a pandas dataframe including the fields</p>
+<pre><code>`mc` the fuel moisture conent (%)
+`fros_vesta` the forward rate of spread (m/h)
+</code></pre></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
 <h3 id="pyropy.spreadmodels.ros_forest_vesta_fhr" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">ros_forest_vesta_fhr</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fhr_surf</span><span class="p">,</span> <span class="n">fhr_n_surf</span><span class="p">)</span></code>
 
@@ -1130,6 +1453,119 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
       <td><p>a pandas dataframe including the fields</p>
 <pre><code>`fros_vesta_fhr` the forward rate of spread (m/h)
 </code></pre></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyropy.spreadmodels.ros_grass" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">ros_grass</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">curing</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Cheney et al. 1998 grass model.
+Eqns: 3.5, 3.6, 3.11</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>curing</code></td>
+        <td><code>str</code></td>
+        <td><p>Curing level (%)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>state</code></td>
+        <td><code>str</code></td>
+        <td><p>Grass state - natural (N), grazed (G), eaten out (E), (W) Woodlands, (F) Open forest</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyropy.spreadmodels.ros_mallee" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">ros_mallee</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cover</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Cruz et al 2013 Semi-arid mallee heath.</p>
+<p>Eqns: 4.17, 4.18</p>
+<p>n = 61
+wind_speed range 5 - 28 km/h
+temp range 16 - 39 C
+humidity range 7 - 80 %
+total_fuel range 3.8 - 14.8 t/ha
+explains 0.74 of variability </p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>cover</code></td>
+        <td><code>int</code></td>
+        <td><p>overstory cover (%)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>height</code></td>
+        <td><code>float</code></td>
+        <td><p>overstory height (m)</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>DataFrame</code></td>
+      <td><p><code>DataFrame</code> including <code>fros_mallee</code>, <code>mc_m</code></p></td>
     </tr>
   </tbody>
 </table>
@@ -1689,7 +2125,7 @@ Incident        </code>
         <td><p>Weather and model output data</p></td>
       </tr>
       <tr>
-        <td><code>wrf</code></td>
+        <td><code>waf</code></td>
         <td><code>float</code></td>
         <td><p>wind reduction factor (0-6)</p></td>
       </tr>
@@ -1712,6 +2148,21 @@ Incident        </code>
         <td><code>fuel_height_ns</code></td>
         <td><code>float</code></td>
         <td><p>near surface fuel height (cm)</p></td>
+      </tr>
+      <tr>
+        <td><code>fuel_height_u</code></td>
+        <td><code>float</code></td>
+        <td><p>understorey fuel height (m) TODO calc this</p></td>
+      </tr>
+      <tr>
+        <td><code>fhr_surf</code></td>
+        <td></td>
+        <td><p>Surface Fuel Hazard Rating (L, M, H, V, E)</p></td>
+      </tr>
+      <tr>
+        <td><code>fhr_n_surf</code></td>
+        <td></td>
+        <td><p>Near Surface Fuel Hazard Rating (L, M, H, V, E)</p></td>
       </tr>
   </tbody>
 </table>
@@ -1800,7 +2251,8 @@ Incident        </code>
       <p>Loads results from an FireBehaviourCalcs spreadsheet into the 
 <code>Incident.df</code>.</p>
 <p>Only loads the pages from FireBehaviourCalcs that have correspond 
-to models already in the <code>Incident.df</code> </p>
+to models then adds fros values to <code>Incident.df</code> in the form 
+<code>'fros_{model}_fbcalc'</code> </p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1824,9 +2276,11 @@ to models already in the <code>Incident.df</code> </p>
         <td><code>list</code></td>
         <td><p>a list of the models to compare. Valid items
 include: <code>'mk5'</code> McArthur mk5 model, <code>'vesta'</code> The Project 
-VESTA model. Also there is a little easter egg here and if you 
-put 'mc' as the model it will get the moisture content (%)
-from the VESTA model.</p></td>
+VESTA model, <code>'vesta2'</code> The Vesta MkII model (dry). </p>
+<p>Also there is a little easter egg here and if you 
+put <code>'mc_v'</code> as the model it will get the moisture content (%)
+from the VESTA model, while <code>'mc_v2'</code> will get the moisture
+content from the Vesta II model</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
@@ -2041,6 +2495,27 @@ Defaults to False.</p></td>
 
 
 
+<h4 id="pyropy.firebehaviour.Incident.run_forest_vesta2" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_forest_vesta2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Runs the Project VestaII model.</p>
+<p>Adds the results to the <code>Incident.df</code></p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h4 id="pyropy.firebehaviour.Incident.run_forest_vesta_fhr" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">run_forest_vesta_fhr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
@@ -2204,13 +2679,13 @@ the spreadsheet) until you open it and click on the relevant sheets.</p>
       
       
         
-        <a href="../license/" class="md-footer__link md-footer__link--next" aria-label="Next: Licence" rel="next">
+        <a href="../examples/compare_mc/" class="md-footer__link md-footer__link--next" aria-label="Next: Comparison of Fine Fuel Moisture Content functions" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Licence
+              Comparison of Fine Fuel Moisture Content functions
             </div>
           </div>
           <div class="md-footer__button md-icon">
