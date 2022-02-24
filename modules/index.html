@@ -410,6 +410,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.adjust_precision" class="md-nav__link">
+    adjust_precision()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.check_params" class="md-nav__link">
     check_params()
   </a>
@@ -419,6 +426,13 @@
           <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.compare_fbcalc" class="md-nav__link">
     compare_fbcalc()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.copy" class="md-nav__link">
+    copy()
   </a>
   
 </li>
@@ -489,6 +503,20 @@
           <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.set_params" class="md-nav__link">
     set_params()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.thin_by_timestep" class="md-nav__link">
+    thin_by_timestep()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.trim_by_datetime" class="md-nav__link">
+    trim_by_datetime()
   </a>
   
 </li>
@@ -755,6 +783,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.adjust_precision" class="md-nav__link">
+    adjust_precision()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.check_params" class="md-nav__link">
     check_params()
   </a>
@@ -764,6 +799,13 @@
           <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.compare_fbcalc" class="md-nav__link">
     compare_fbcalc()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.copy" class="md-nav__link">
+    copy()
   </a>
   
 </li>
@@ -834,6 +876,20 @@
           <li class="md-nav__item">
   <a href="#pyropy.firebehaviour.Incident.set_params" class="md-nav__link">
     set_params()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.thin_by_timestep" class="md-nav__link">
+    thin_by_timestep()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.trim_by_datetime" class="md-nav__link">
+    trim_by_datetime()
   </a>
   
 </li>
@@ -2184,6 +2240,51 @@ Incident        </code>
 
 
 
+<h4 id="pyropy.firebehaviour.Incident.adjust_precision" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">adjust_precision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precision_dict</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Adjusts the precision of the records in the incident dataframe.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>precision_dict</code></td>
+        <td><code>dict</code></td>
+        <td><p>defines the precision of the fields to be 
+changed. Example:
+    <code>precision_dict = {
+        0: ['ffdi','fros', 'ros'],
+        1: ['mc', 'mf'],
+        2: []
+    }</code></p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h4 id="pyropy.firebehaviour.Incident.check_params" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">check_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></code>
 
@@ -2297,6 +2398,41 @@ content from the Vesta II model</p></td>
     <tr>
       <td><code>None</code></td>
       <td></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="pyropy.firebehaviour.Incident.copy" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Deep copy.</p>
+
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Incident</code></td>
+      <td><p>a deep copy of the <code>Incident</code>.</p></td>
     </tr>
   </tbody>
 </table>
@@ -2622,6 +2758,97 @@ the spreadsheet) until you open it and click on the relevant sheets.</p>
         <td><code>dict</code></td>
         <td><p>a dictionary of the model parameters to be updated.</p></td>
         <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="pyropy.firebehaviour.Incident.thin_by_timestep" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">thin_by_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Removes records from the incident dataframe.</p>
+<p>The dataframe will have a a minimum time step given by <code>time_step</code></p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>time_step</code></td>
+        <td><code>float</code></td>
+        <td><p>Minimum time step in hours. Defaults to 1.</p></td>
+        <td><code>1</code></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="pyropy.firebehaviour.Incident.trim_by_datetime" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">trim_by_datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Trims the records of the <code>Incident Dataframe</code> to a datetime range.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>start</code></td>
+        <td><code>str</code></td>
+        <td><p>the start datetime</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>end</code></td>
+        <td><code>str</code></td>
+        <td><p>the end datetime</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>format</code></td>
+        <td><code>str</code></td>
+        <td><p>The datetime format. Defaults to '%Y%m%d %H:%M'.</p></td>
+        <td><code>&#39;%Y%m%d %H:%M&#39;</code></td>
       </tr>
   </tbody>
 </table>
