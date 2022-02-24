@@ -32,6 +32,8 @@ dataframes from standard sources
 # - add flame hight and intensity
 # = flank ROS from length to breadth ratio
 
+from logging import warning
+import warnings
 import numpy as np
 from pandas import DataFrame, Series
 import math as m
@@ -104,25 +106,14 @@ def ros_forest_vesta(
             `fros_vesta` the forward rate of spread (m/h)
     """
 
-    # determine moisture content
     #TODO tidy this with df.where
     ros_df = df.copy(deep=True)
 
-
-    # ros_df['mc'] = np.where(
-    #     (ros_df['date_time'].dt.hour >= 9) & (ros_df['date_time'].dt.hour < 20),
-    #     np.where(
-    #         (ros_df['date_time'].dt.hour >= 12) & (ros_df['date_time'].dt.hour < 17), 
-    #         2.76 + (0.124*ros_df['humidity']) - (0.0187*ros_df['temp']), 
-    #         3.6 + (0.169*ros_df['humidity']) - (0.045*ros_df['temp'])
-    #     ),
-    #     3.08 + (0.198*ros_df['humidity']) - (0.0483*ros_df['temp'])
-    # )
-    if not 'mc' in ros_df.columns.values:
-        ros_df['mc'] = get_mc(ros_df)
+    if not 'mc_v' in ros_df.columns.values:
+        ros_df['mc_v'] = get_mc_v(ros_df)
 
     # determine moisture function
-    mf = 18.35 * ros_df['mc']**-1.495
+    mf = 18.35 * ros_df['mc_v']**-1.495
 
     # determine the ROS
     ros_df['fros_vesta'] = np.where(
@@ -167,11 +158,11 @@ def ros_forest_vesta_fhr(
     surf_coeff = surface[fhr_surf]
     near_surf_coeff = near_surface[fhr_n_surf]
 
-    if not 'mc' in ros_df.columns.values:
-        ros_df['mc'] = get_mc(ros_df)
+    if not 'mc_v' in ros_df.columns.values:
+        ros_df['mc_v'] = get_mc_v(ros_df)
 
     # determine moisture function
-    mf = 18.35 * ros_df['mc']**-1.495
+    mf = 18.35 * ros_df['mc_v']**-1.495
 
     ros_df['fros_vesta_fhr'] = np.where(
         ros_df['wind_speed'] > 5,
@@ -181,6 +172,153 @@ def ros_forest_vesta_fhr(
     ros_df['fros_vesta_fhr'] = (ros_df['fros_vesta_fhr']*mf).astype(int)
 
     return ros_df
+
+def ros_forest_vesta_08(
+        df: DataFrame,
+        fhs_surf: float,
+        fhs_n_surf: float,
+        fuel_height_ns: float, #cm
+    ) -> DataFrame:
+    """Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
+    scores from Gould et al. 2008 Eqn:4 
+
+    Application: Wildfire in Sclerophyll (Eucalypt) forests
+   
+    Notes: Superceded by Cheney et al 2012
+
+    Args:
+        df: a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
+        fhs_surf: surface fuel hazard score (0-4)
+        fhs_n_surf: near surface fuel hazard score (0-4)
+        fuel_height_ns: near surface fuel height (cm)
+
+    Returns:
+        a pandas dataframe including the fields
+
+            `mc` the fuel moisture conent (%)
+            `fros_vesta` the forward rate of spread (m/h)
+    """
+
+    ros_df = df.copy(deep=True)
+    
+    if not 'mc_v' in ros_df.columns.values:
+        ros_df['mc_v'] = get_mc_v(ros_df)
+
+    # determine moisture function
+    mf = 18.35 * ros_df['mc_v']**-1.495
+
+    # determine the ROS
+    ros_df['fros_vesta_08'] = np.where(
+        ros_df['wind_speed'] > 5,
+        30.0 + 3.102 * (ros_df['wind_speed']-5)**0.904 * m.exp(0.279*fhs_surf+0.611*fhs_n_surf+0.013*fuel_height_ns),
+        30
+    )
+
+    ros_df['fros_vesta_08'] = (ros_df['fros_vesta_08']* mf).astype(int)
+    return ros_df
+
+
+def ros_forest_vesta2(
+        df: DataFrame,
+        waf: float,
+        fuel_load: float,
+        height_u: float,
+        drought: float = None,
+    ) -> DataFrame:
+    """Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
+    scores
+
+    Eqn: 5.28
+
+    Application: Wildfire in Sclerophyll (Eucalypt) forests
+   
+    Notes: 
+
+    Args:
+        df: a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
+        waf: wind adjustment factor (1-6)
+        fuel_load: near surface fuel load (t/ha)
+        fuel_height_u: understorey fuel height (cm)
+
+    Returns:
+        a pandas dataframe including the fields
+
+            `mc` the fuel moisture conent (%)
+            `fros_vesta` the forward rate of spread (m/h)
+    """
+
+    #TODO tidy this with df.where
+    ros_df = df.copy(deep=True)
+
+    if not 'mc_v' in ros_df.columns.values:
+        ros_df['mc_v'] = get_mc_v(ros_df)
+
+    if not 'drought' in ros_df.columns.values:
+        if drought is None: 
+            warnings.warn(
+                "NO DROUGHT FACTOR SUPPLIED! The default value 9 will be used."
+            )
+            drought=9
+        ros_df['drought'] = drought
+
+    # determine moisture factor
+    fM_d = np.where(ros_df['mc_v'] <= 4.1,
+        1,
+        np.where(ros_df['mc_v'] > 24.0,
+            0,
+            0.9082 + 0.1206*ros_df['mc_v']-0.03106*ros_df['mc_v']**2+0.001853*ros_df['mc_v']**3-0.00003467*ros_df['mc_v']**4
+        )
+    )
+
+    fFA = 1.008 / (1+104.9* np.exp(-0.9306*ros_df['drought']))
+
+
+    fM = fM_d * fFA
+
+    # TODO remove after debug
+    ros_df['fM_d'] = fM_d
+    ros_df['fFA'] = fFA
+    ros_df['fM'] = fM
+
+    # phase 1 rate of spread
+    ros_df['vesta2_r1'] = (
+        (0.03+0.05024*(ros_df['wind_speed']/waf - 1)**0.92628 * (fuel_load/10)**0.79928)*fM
+    )
+    ros_df['vesta2_r1'] = ros_df['vesta2_r1'].where(ros_df['wind_speed']>2, 0.03*fM)
+    ros_df['vesta2_r1']=ros_df['vesta2_r1']*1000
+
+    g_x_p2 = -23.9315 + 1.7033*ros_df['wind_speed']/waf + 12.0822*fM + 0.95236*fuel_load
+
+    if fuel_load < 1.0:
+        ros_df['vesta2_p2'] = 0
+    else: 
+        ros_df['vesta2_p2'] = 1/(1+ np.exp(-g_x_p2))
+
+    # phase 2 ros
+    ros_df['vesta2_r2'] = (
+        0.19591*(ros_df['wind_speed']/waf)**0.82569*(fuel_load/10)**0.46722*height_u**0.495*fM
+    ) * 1000
+    
+    g_x_p3 = -32.3074 + 0.2951*ros_df['wind_speed']+26.8734*fM
+
+    ros_df['vesta2_p3']= 1/(1+ np.exp(-g_x_p3))
+    ros_df['vesta2_p3'] = ros_df['vesta2_p3'].where(ros_df['vesta2_r2'] >= 0.3,0)
+
+    # phase 3 ros
+    ros_df['vesta2_r3'] = 0.05235*ros_df['wind_speed']**1.19128 *fM * 1000
+    
+    # overall ros
+    ros_df['fros_vesta2'] = (ros_df['vesta2_r1']* (1-ros_df['vesta2_p2']) + 
+        ros_df['vesta2_r2']*ros_df['vesta2_p2'])
+    
+    ros_df['fros_vesta2'] = ros_df['fros_vesta2'].where(
+        ros_df['vesta2_p2'] < 0.5,
+        ros_df['fros_vesta2']*(1-ros_df['vesta2_p3'])+ros_df['vesta2_r3']*ros_df['vesta2_p3']
+    )
+    return ros_df
+
 
 def ros_grass(
     df: DataFrame, 
@@ -199,8 +337,10 @@ def ros_grass(
     # create the ros dataframe from the datetime
     ros_df = df.copy(deep=True)
     
-    # dead fuel moisture content from weather data Eqn 3.8
-    ros_df['mc_g'] = 9.58 - 0.205*ros_df['temp'] + 0.138 * ros_df['humidity']
+    if not 'mc_g' in ros_df.columns.values:
+        ros_df['mc_g'] = get_mc_g(ros_df)
+
+    # ros_df['mc_g'] = 9.58 - 0.205*ros_df['temp'] + 0.138 * ros_df['humidity']
     
     # fuel moisture coeff Eqn 3.7
     ros_df['fm_coeff'] = np.where(
@@ -263,8 +403,8 @@ def ros_mallee(
     explains 0.74 of variability 
 
     Args:
-        height: overstory height (m)
         cover: overstory cover (%)
+        height: overstory height (m)
     
     Returns:
         `DataFrame` including `fros_mallee`, `mc_m`
@@ -273,47 +413,53 @@ def ros_mallee(
     
     ros_df = df.copy(deep=True)
 
-    #set delta = 1 if between 12:00 and 17:00 Sep-Mar, else 0
-    ros_df['delta'] = 0
-    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month > 3, 1)
-    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month < 10, 1)
-    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour > 11, 0)
-    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour < 18, 0)
+    if not 'mc_m' in ros_df.columns.values:
+        ros_df['mc_m'] = get_mc_m(ros_df)
+
+    # #set delta = 1 if between 12:00 and 17:00 Sep-Mar, else 0
+    # ros_df['delta'] = 0
+    # ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month > 3, 1)
+    # ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month < 10, 1)
+    # ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour > 11, 0)
+    # ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour < 18, 0)
     
-    ros_df['mc_m'] = (
-        4.74 
-        + 0.108*ros_df['humidity'] 
-        - 0.1*(ros_df['temp'] - 25)
-        - ros_df['delta']*(1.68+0.028*ros_df['humidity'])
-        )
+    # ros_df['mc_m'] = (
+    #     4.74 
+    #     + 0.108*ros_df['humidity'] 
+    #     - 0.1*(ros_df['temp'] - 25)
+    #     - ros_df['delta']*(1.68+0.028*ros_df['humidity'])
+    #     )
+
     ros_df['p_surface'] = (
-        1 
-        + np.exp(-(
+        1 + np.exp(-(
             14.62+0.207*ros_df['wind_speed']
             -1.872*ros_df['mc_m']
             -0.304*cover
             ))
-        )**-1
+    )**-1
+
     ros_df['p_crown'] = (
-        1 
-        + np.exp(-(
+        1 + np.exp(-(
             -11.138
             +1.4054*ros_df['wind_speed'] 
             - 3.4217*ros_df['mc_m']
-            ))
-        )**-1
+        ))
+    )**-1
+
     ros_df['fros_surface'] = (
         3.337
         *ros_df['wind_speed']
         *np.exp(-0.1284*ros_df['mc_m'])
         *height**-0.7073
-        )
+    )
+
     ros_df['fros_crown'] = (
         9.5751
         *ros_df['wind_speed']
         *np.exp(-0.1795*ros_df['mc_m'])
         *(cover/100)**0.3589
-        )
+    )
+
     # convert from m/min to km/h
     ros_df['fros_surface'] = ros_df['fros_surface']*0.06
     ros_df['fros_crown'] = ros_df['fros_crown']*0.06
@@ -322,9 +468,10 @@ def ros_mallee(
         0,
         (
             (1-ros_df['p_crown'])*ros_df['fros_surface']
-            +ros_df['p_crown']*ros_df['fros_crown']
+                +ros_df['p_crown']*ros_df['fros_crown']
             )
     )
+
     return ros_df
 
 ########################################################################
@@ -389,8 +536,8 @@ def get_FFDI(
     
     return Series(ffdi.round(1))
 
-def get_mc(df: DataFrame) -> Series:
-    """Calculates the moisture content using equation 5.30
+def get_mc_v(df: DataFrame) -> Series:
+    """Calculates VESTA the moisture content using equation 5.30
 
     Args:
         df (DataFrame): a pandas dataframe which must contain the specified the weather
@@ -401,16 +548,59 @@ def get_mc(df: DataFrame) -> Series:
     """
 
     mc = np.where(
-        (df['date_time'].dt.hour >= 9) & (df['date_time'].dt.hour < 20),
+        (df['date_time'].dt.hour > 6) & (df['date_time'].dt.hour < 20),
         np.where(
-            (df['date_time'].dt.hour >= 12) & (df['date_time'].dt.hour < 17), 
+            (df['date_time'].dt.hour > 12) & (df['date_time'].dt.hour <= 17), 
             2.76 + (0.124*df['humidity']) - (0.0187*df['temp']), 
             3.6 + (0.169*df['humidity']) - (0.045*df['temp'])
         ),
         3.08 + (0.198*df['humidity']) - (0.0483*df['temp'])
     )
 
-    return Series(mc.round(1))
+    return Series(mc)
+
+def get_mc_g(df: DataFrame) -> Series:
+    """Calculates the grass moisture content using equation 3.8
+
+    Args:
+        df (DataFrame): a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
+
+    Returns:
+        Series: the fine dead fuel moisture content (%)
+    """
+
+    mc = 9.58 - 0.205*df['temp'] + 0.138 * df['humidity']
+    
+    return mc
+
+def get_mc_m(df: DataFrame) -> Series:
+    """Calculates the mallee moisture content using equation 4.15
+
+    Args:
+        df (DataFrame): a pandas dataframe which must contain the specified the weather
+            data. This can be an Incident dataframe (`Incident.df`)
+
+    Returns:
+        Series: the fine dead fuel moisture content (%)
+    """
+    ros_df = df.copy(deep=True)
+
+    #set delta = 1 if between 12:00 and 17:00 Sep-Mar, else 0
+    ros_df['delta'] = 0
+    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month > 3, 1)
+    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month < 10, 1)
+    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour > 11, 0)
+    ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour < 18, 0)
+    
+    mc = (
+        4.74 
+        + 0.108*ros_df['humidity'] 
+        - 0.1*(ros_df['temp'] - 25)
+        - ros_df['delta']*(1.68+0.028*ros_df['humidity'])
+        )
+
+    return mc
 
 
 

@@ -3,11 +3,14 @@
 Defines the classes used to analyse fire behaviour with PyroPy.
 
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 import warnings
 from openpyxl import load_workbook
 from pandas import DataFrame, read_csv
+from copy import deepcopy
+from datetime import datetime
 
 if __name__ == '__main__':
     import spreadmodels as fbs
@@ -21,25 +24,29 @@ class Incident(object):
 
     Attributes:
         df (Dataframe): Weather and model output data
-        wrf (float): wind reduction factor (0-6)
+        waf (float): wind reduction factor (0-6)
         fuel_load (float): fine fuel load (t/ha)
         fhs_surf (float): surface fuels hazard score (1-4)
         fhs_n_surf (float): near surface fuels hazard score (1-4)
         fuel_height_ns (float): near surface fuel height (cm)
+        fuel_height_u (float): understorey fuel height (m) TODO calc this
+        fhr_surf: Surface Fuel Hazard Rating (L, M, H, V, E)
+        fhr_n_surf: Near Surface Fuel Hazard Rating (L, M, H, V, E)
 
     """
     def __init__(self, weather_df: DataFrame):
         self.df = weather_df
-        self.wrf = None
+        self.waf = None
         self.fuel_load = None #t/ha
         self.fhs_surf = None
         self.fhs_n_surf = None 
         self.fuel_height_ns = None
+        self.fuel_height_u = None
         self.fhr_surf = None
         self.fhr_n_surf = None
 
         self.fbcalc_params_mk5 = {
-            'wrf': 'J4',
+            'waf': 'J4',
             'fuel_load': 'C4', 
         }
 
@@ -49,6 +56,61 @@ class Incident(object):
             'fuel_height_ns': 'C8',
         }
 
+        self.fbcalc_params_vesta2 = {
+            'waf': 'O10',
+            'fuel_load': 'F7',
+            'fuel_height_u': 'C10',
+
+        }
+
+    def copy(self) -> Incident:
+        """Deep copy.
+
+        Returns:
+            Incident: a deep copy of the `Incident`.
+        """
+        return deepcopy(self)
+
+    def trim_by_datetime(self, 
+            start: str, 
+            end: str,
+            format = '%Y%m%d %H:%M'
+        ) -> None:
+        """Trims the records of the `Incident Dataframe` to a datetime range.
+
+        Args:
+            start (str): the start datetime
+            end (str): the end datetime
+            format (str, optional): The datetime format. Defaults to '%Y%m%d %H:%M'.
+        """
+        start = datetime.strptime(start, format)
+        end = datetime.strptime(end, format)
+        self.df =  fbh.trim_by_datetimes(self.df, start, end)
+        pass
+
+    def thin_by_timestep(self, time_step: float=1) -> None:
+        """Removes records from the incident dataframe.
+
+        The dataframe will have a a minimum time step given by `time_step`
+
+        Args:
+            time_step (float, optional): Minimum time step in hours. Defaults to 1.
+        """
+        self.df = fbh.thin_by_timestep(self.df, time_step)
+
+    def adjust_precision(self, precision_dict: dict) -> None:
+        """Adjusts the precision of the records in the incident dataframe.
+
+        Args:
+            precision_dict (dict): defines the precision of the fields to be 
+                changed. Example:
+                    `precision_dict = {
+                        0: ['ffdi','fros', 'ros'],
+                        1: ['mc', 'mf'],
+                        2: []
+                    }`
+        """
+        self.df = fbh.adjust_precision(self.df, precision_dict)
     
     def get_params(self) -> dict:
         """Gets the model parameters that have been defined.
@@ -105,11 +167,11 @@ class Incident(object):
         Adds the results to the `Incident.df`
         """
         forest_mk5_params = {
-            'wrf': self.wrf,
+            'waf': self.waf,
             'fuel_load': self.fuel_load,
         }
         if self.check_params(forest_mk5_params):
-            self.df = fbs.ros_forest_mk5(self.df, self.wrf, self.fuel_load)
+            self.df = fbs.ros_forest_mk5(self.df, self.waf, self.fuel_load)
 
     def run_forest_vesta(self) -> None:
         """Runs the Project Vesta (fuel hazard scores) model.
@@ -125,6 +187,26 @@ class Incident(object):
 
         if self.check_params(forest_vesta_params):
             self.df = fbs.ros_forest_vesta(
+                self.df, 
+                self.fhs_surf, 
+                self.fhs_n_surf, 
+                self.fuel_height_ns,
+            )
+
+    def run_forest_vesta_08(self) -> None:
+        """Runs the Project Vesta (fuel hazard scores) model.
+
+        Adds the results to the `Incident.df`
+        """
+        forest_vesta_params = {
+            'fhs_surf': self.fhs_surf,
+            'fhs_n_surf': self.fhs_n_surf,
+            'fuel_height_ns': self.fuel_height_ns,
+        }
+
+
+        if self.check_params(forest_vesta_params):
+            self.df = fbs.ros_forest_vesta_08(
                 self.df, 
                 self.fhs_surf, 
                 self.fhs_n_surf, 
@@ -147,6 +229,28 @@ class Incident(object):
                 self.fhr_surf, 
                 self.fhr_n_surf, 
             )
+
+    def run_forest_vesta2(self) -> None:
+        """Runs the Project VestaII model.
+
+        Adds the results to the `Incident.df`
+        """
+        forest_vesta2_params = {
+            'waf': self.waf,
+            'fuel_load': self.fuel_load,
+            'fuel_height_u': self.fuel_height_u,
+        }
+
+
+        if self.check_params(forest_vesta2_params):
+            self.df = fbs.ros_forest_vesta2(
+                self.df, 
+                self.waf, 
+                self.fuel_load, 
+                self.fuel_height_u,
+            )
+
+    
 
     def print(self, head=False) -> None:
         """Prints the field headings and rows of the `Dataframe`
@@ -187,9 +291,12 @@ class Incident(object):
             fn (str): path to the FireBehaviourCalcs spreadsheet
             model (list): a list of the models to compare. Valid items
                 include: `'mk5'` McArthur mk5 model, `'vesta'` The Project 
-                VESTA model. Also there is a little easter egg here and if you 
-                put 'mc' as the model it will get the moisture content (%)
-                from the VESTA model.
+                VESTA model, `'vesta2'` The Vesta MkII model (dry). 
+                
+                Also there is a little easter egg here and if you 
+                put `'mc_v'` as the model it will get the moisture content (%)
+                from the VESTA model, while `'mc_v2'` will get the moisture
+                content from the Vesta II model
 
         Returns:
             None:
@@ -197,12 +304,16 @@ class Incident(object):
         fbcalc_refs = {
             'mk5': ['Forest(McArthur)', 'O', self.fbcalc_params_mk5],
             'vesta': ['Forest(VESTA)', 'P', self.fbcalc_params_vesta],
-            'mc': ['Forest(VESTA)', 'M', {}],
+            'vesta2': ['VESTA Mk2 Dry', 'Y', self.fbcalc_params_vesta2],
+            'mc_v': ['Forest(VESTA)', 'M', {}],
+            'mc_v2': ['VESTA Mk2 Dry', 'N', {}],
         }
 
+        # TODO this need to happen after the params are set.
         run_model_functions = {
             'mk5': self.run_forest_mk5,
             'vesta': self.run_forest_vesta,
+            'vesta2': self.run_forest_vesta2,
         }
 
         if fbh.check_filepath(fn, suffix='xlsm'):
@@ -215,8 +326,13 @@ class Incident(object):
                     ros_vals =  [cell.value for cell in column if isinstance(
                             cell.value, (float, int)
                         )]
-                    self.df[f'fros_{model}_fbcalc'] = ros_vals
-                    self.df[f'fros_{model}_fbcalc'] = self.df[f'fros_{model}_fbcalc'].astype(int)
+                    field = f'fros_{model}_fbcalc'
+                    if not model_params: field = f'{model}_fbcalc' #not a fros model
+
+                    self.df[field] = ros_vals
+                    if model_params: self.df[field] = self.df[field].astype(int)
+
+                    
                     params = {param: ws[address].value 
                         for (param, address) in model_params.items()
                     }
@@ -226,12 +342,11 @@ class Incident(object):
                         run_model_functions[model]()            
         return None
 
-    def compare_amicus(self, fn: str) -> None:
+    def compare_amicus(self, fn: str, model: str) -> None:
         if fbh.check_filepath(fn, suffix='csv'):
-            print(fbh.check_encoding(fn))
             df = read_csv(fn, header=0, encoding=fbh.check_encoding(fn))
             self.df['mc_amicus'] = df['Predicted FMC (%)']
-            self.df['fros_vesta_amicus'] = df['Rate of spread (m/h)']
+            self.df[f'fros_{model}_amicus'] = df['Rate of spread (m/h)']
         pass
 
     def set_fbcalc(self, fn: str) -> bool:

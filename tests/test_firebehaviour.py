@@ -20,10 +20,10 @@ def mock_incident(mock_weather):
     return fb.Incident(mock_weather)
 
 def test_get_params(mock_incident):
-    mock_incident.wrf = 4
+    mock_incident.waf = 4
     params = mock_incident.get_params()
     assert type(params) is dict
-    assert params['wrf'] == 4
+    assert params['waf'] == 4
 
 def test_check_params(mock_incident):
     warnings.simplefilter('always') #catch all warnings always
@@ -35,17 +35,17 @@ def test_check_params(mock_incident):
 
 def test_set_params(mock_incident):
     params = {
-            'wrf': randrange(6),
+            'waf': randrange(6),
             'fuel_load': randrange(25),
         }
     mock_incident.set_params(params)
-    assert mock_incident.wrf == params['wrf']
+    assert mock_incident.waf == params['waf']
     assert mock_incident.fuel_load == params['fuel_load']
 
 
 def test_run_forest_mk5(mock_incident):
     forest_mk5_params = {
-        'wrf': 3.5,
+        'waf': 3.5,
         'fuel_load': 15,
     }
     mock_incident.set_params(forest_mk5_params)
@@ -62,6 +62,16 @@ def test_run_forest_vesta(mock_incident):
     mock_incident.run_forest_vesta()
     assert 'fros_vesta' in mock_incident.df.columns.values
 
+def test_run_forest_vesta2(mock_incident):
+    forest_vesta_params = {
+        'waf': 3,
+        'fuel': 14,
+        'fuel_height_u': 0.8
+    }
+    mock_incident.set_params(forest_vesta_params)
+    mock_incident.run_forest_vesta2()
+    assert 'fros_vesta2' in mock_incident.df.columns.values
+
 def test_run_forest_vesta_fhr(mock_incident):
     forest_vesta_params = {
         'fhr_surf': 'H',
@@ -76,7 +86,7 @@ def test_run_forest_vesta_fhr(mock_incident):
 def mock_incident(mock_weather):
     mock_incident =  fb.Incident(mock_weather)
     forest_params = {
-        'wrf': 3.5,
+        'waf': 3.5,
         'fuel_load': 15,
         'fhs_surf': 3.5,
         'fhs_n_surf': 2,

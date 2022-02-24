@@ -20,8 +20,21 @@ def test_get_FFDI(mock_weather):
     assert type(ffdi) is Series
     assert not ffdi.empty
 
-def test_get_mc(mock_weather):
-    mc = fs.get_mc(mock_weather)
+def test_get_mc_v(mock_weather):
+    """Vesta fine fuel moisture content."""
+    mc = fs.get_mc_v(mock_weather)
+    assert type(mc) is Series
+    assert not mc.empty
+
+def test_get_mc_g(mock_weather):
+    """Grass fine fuel moisture content."""
+    mc = fs.get_mc_g(mock_weather)
+    assert type(mc) is Series
+    assert not mc.empty
+
+def test_get_mc_m(mock_weather):
+    """Mallee fine fuel moisture content."""
+    mc = fs.get_mc_m(mock_weather)
     assert type(mc) is Series
     assert not mc.empty
 
@@ -40,6 +53,11 @@ def test_ros_forest_vesta_fhr(mock_weather):
     assert type(df) is DataFrame
     assert 'fros_vesta_fhr' in df.columns.values
 
+def test_ros_forest_vesta2(mock_weather):
+    df = fs.ros_forest_vesta2(mock_weather, 3, 14, 0.8)
+    assert type(df) is DataFrame
+    assert 'fros_vesta2' in df.columns.values
+
 def test_ros_grass(mock_weather):
     df = fs.ros_grass(mock_weather, 'E', 90)
     assert type(df) is DataFrame
@@ -47,7 +65,7 @@ def test_ros_grass(mock_weather):
     assert 'mc_g' in df.columns.values
 
 def test_ros_mallee(mock_weather):
-    df = fs.ros_mallee(mock_weather, 5, 30)
+    df = fs.ros_mallee(mock_weather, 30, 5)
     assert type(df) is DataFrame
     assert 'fros_mallee' in df.columns.values
     assert 'mc_m' in df.columns.values

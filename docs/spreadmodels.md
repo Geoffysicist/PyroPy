@@ -1,3 +1,0 @@
-# Spread Models
-
-::: pyropy.spreadmodels

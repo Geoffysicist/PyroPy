@@ -11,7 +11,8 @@ logo: docs/img/FBA-Aus_red_cropped.png
 nav:
   - Home: index.md
   - Modules: modules.md
-  #- Spread Models: spreadmodels.md
+  - Examples:
+    - Moisture Content Comparison: examples/compare_mc.ipynb
   - Licence: license.md
 
 #theme: readthedocs
@@ -38,15 +39,16 @@ plugins:
         - import sys
         - sys.path.append('src')
         # uncomment the lines below when building
-        - import shutil
-        - shutil.copyfile('README.md', 'docs/index.md')
-        - shutil.copyfile('LICENSE', 'docs/license.md')
+        # - import shutil
+        # - shutil.copyfile('README.md', 'docs/index.md')
+        # - shutil.copyfile('LICENSE', 'docs/license.md')
         rendering:
           show_source: false
           show_root_toc_entry: false
     #custom_templates: templates
     watch:
       - src/pyropy
+- mkdocs-jupyter
 
 extra_css:
   - stylesheets/extra.css
