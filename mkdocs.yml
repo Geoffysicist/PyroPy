@@ -4,14 +4,15 @@ site_url: http://geoffysicist.github.io/PyroPy/
 repo_url: https://github.com/Geoffysicist/PyroPy/
 # repo_name: 
 
-favicon: docs/img/favicon.ico
+#favicon: docs/img/favicon.png
 
-logo: docs/img/FBA-Aus_red_cropped.png
+# logo: docs/img/FBA-Aus_red_cropped.png
 
 nav:
   - Home: index.md
   - Modules: modules.md
-  #- Spread Models: spreadmodels.md
+  - Examples:
+    - Moisture Content Comparison: examples/compare_mc.ipynb
   - Licence: license.md
 
 #theme: readthedocs
@@ -21,7 +22,7 @@ theme:
   #   scheme: PyroPy
     # primary: red
 
-  favicon: img/favicon.ico
+  favicon: img/FBA-Aus_red_cropped.png
 
   logo: img/FBA-Aus_red_cropped.png
 
@@ -47,6 +48,7 @@ plugins:
     #custom_templates: templates
     watch:
       - src/pyropy
+- mkdocs-jupyter
 
 extra_css:
   - stylesheets/extra.css
