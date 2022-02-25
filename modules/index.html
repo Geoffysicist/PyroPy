@@ -12,7 +12,7 @@
       
         <link rel="canonical" href="http://geoffysicist.github.io/PyroPy/modules/">
       
-      <link rel="icon" href="../img/favicon.ico">
+      <link rel="icon" href="../img/FBA-Aus_red_cropped.png">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.11">
     
     
@@ -313,13 +313,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.spreadmodels.ros_forest_vesta_08" class="md-nav__link">
-    ros_forest_vesta_08()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#pyropy.spreadmodels.ros_forest_vesta_fhr" class="md-nav__link">
     ros_forest_vesta_fhr()
   </a>
@@ -494,15 +487,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.firebehaviour.Incident.run_forest_vesta_08" class="md-nav__link">
-    run_forest_vesta_08()
+  <a href="#pyropy.firebehaviour.Incident.run_forest_vesta_fhr" class="md-nav__link">
+    run_forest_vesta_fhr()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.firebehaviour.Incident.run_forest_vesta_fhr" class="md-nav__link">
-    run_forest_vesta_fhr()
+  <a href="#pyropy.firebehaviour.Incident.run_grass" class="md-nav__link">
+    run_grass()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.run_mallee" class="md-nav__link">
+    run_mallee()
   </a>
   
 </li>
@@ -700,13 +700,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.spreadmodels.ros_forest_vesta_08" class="md-nav__link">
-    ros_forest_vesta_08()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#pyropy.spreadmodels.ros_forest_vesta_fhr" class="md-nav__link">
     ros_forest_vesta_fhr()
   </a>
@@ -881,15 +874,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.firebehaviour.Incident.run_forest_vesta_08" class="md-nav__link">
-    run_forest_vesta_08()
+  <a href="#pyropy.firebehaviour.Incident.run_forest_vesta_fhr" class="md-nav__link">
+    run_forest_vesta_fhr()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#pyropy.firebehaviour.Incident.run_forest_vesta_fhr" class="md-nav__link">
-    run_forest_vesta_fhr()
+  <a href="#pyropy.firebehaviour.Incident.run_grass" class="md-nav__link">
+    run_grass()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyropy.firebehaviour.Incident.run_mallee" class="md-nav__link">
+    run_mallee()
   </a>
   
 </li>
@@ -1270,8 +1270,7 @@ severe.</p>
       <tr>
         <td><code>df</code></td>
         <td><code>DataFrame</code></td>
-        <td><p>a pandas dataframe which must contain the specified the weather
-data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><p>the weather data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -1316,7 +1315,7 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
 
 <h3 id="pyropy.spreadmodels.ros_forest_vesta" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">ros_forest_vesta</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fhs_surf</span><span class="p">,</span> <span class="n">fhs_n_surf</span><span class="p">,</span> <span class="n">fuel_height_ns</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">ros_forest_vesta</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fhs_surf</span><span class="p">,</span> <span class="n">fhs_n_surf</span><span class="p">,</span> <span class="n">fuel_height_ns</span><span class="p">,</span> <span class="n">version_12</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1344,8 +1343,7 @@ are severe and use McArthur 1973a Mk5 Forest Fire Danger Meter.</p>
       <tr>
         <td><code>df</code></td>
         <td><code>DataFrame</code></td>
-        <td><p>a pandas dataframe which must contain the specified the weather
-data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><p>the weather data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -1365,6 +1363,13 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
         <td><code>float</code></td>
         <td><p>near surface fuel height (cm)</p></td>
         <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>version_12</code></td>
+        <td><code>bool</code></td>
+        <td><p>if <code>True</code> uses the Cheney et al. 2012 equation, if <code>False</code> uses
+the gould et al. 2008 version. Defaults to <code>True</code></p></td>
+        <td><code>True</code></td>
       </tr>
   </tbody>
 </table>
@@ -1406,7 +1411,9 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
       <p>Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
 scores</p>
-<p>Eqn: 5.28</p>
+<p>Cruz, et al. 2022 'An Empirical-Based Model for Predicting the Forward 
+Spread Rate of Wildfires in Eucalypt Forests'. 
+International Journal of Wildland Fire. https://doi.org/10.1071/WF21068</p>
 <p>Application: Wildfire in Sclerophyll (Eucalypt) forests</p>
 <p>Notes: </p>
 
@@ -1424,8 +1431,7 @@ scores</p>
       <tr>
         <td><code>df</code></td>
         <td><code>DataFrame</code></td>
-        <td><p>a pandas dataframe which must contain the specified the weather
-data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><p>the weather data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -1476,85 +1482,6 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
 
 
-<h3 id="pyropy.spreadmodels.ros_forest_vesta_08" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">ros_forest_vesta_08</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fhs_surf</span><span class="p">,</span> <span class="n">fhs_n_surf</span><span class="p">,</span> <span class="n">fuel_height_ns</span><span class="p">)</span></code>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
-scores from Gould et al. 2008 Eqn:4 </p>
-<p>Application: Wildfire in Sclerophyll (Eucalypt) forests</p>
-<p>Notes: Superceded by Cheney et al 2012</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>df</code></td>
-        <td><code>DataFrame</code></td>
-        <td><p>a pandas dataframe which must contain the specified the weather
-data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>fhs_surf</code></td>
-        <td><code>float</code></td>
-        <td><p>surface fuel hazard score (0-4)</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>fhs_n_surf</code></td>
-        <td><code>float</code></td>
-        <td><p>near surface fuel hazard score (0-4)</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>fuel_height_ns</code></td>
-        <td><code>float</code></td>
-        <td><p>near surface fuel height (cm)</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>DataFrame</code></td>
-      <td><p>a pandas dataframe including the fields</p>
-<pre><code>`mc` the fuel moisture conent (%)
-`fros_vesta` the forward rate of spread (m/h)
-</code></pre></td>
-    </tr>
-  </tbody>
-</table>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-function">
-
-
-
 <h3 id="pyropy.spreadmodels.ros_forest_vesta_fhr" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">ros_forest_vesta_fhr</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fhr_surf</span><span class="p">,</span> <span class="n">fhr_n_surf</span><span class="p">)</span></code>
 
@@ -1567,7 +1494,7 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 ratings</p>
 <p>Eqn: 5.31</p>
 <p>Application: Wildfire in Sclerophyll (Eucalypt) forests</p>
-<p>Notes: anything else about the model.</p>
+<p>Notes: </p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1583,8 +1510,7 @@ ratings</p>
       <tr>
         <td><code>df</code></td>
         <td><code>DataFrame</code></td>
-        <td><p>a pandas dataframe which must contain the specified the weather
-data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><p>the weather data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -1636,8 +1562,10 @@ data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
 
     <div class="doc doc-contents ">
 
-      <p>Cheney et al. 1998 grass model.
-Eqns: 3.5, 3.6, 3.11</p>
+      <p>Forward Rate of Spread (FROS) from Cheney et al. 1998 grass model.</p>
+<p>Eqns: 3.5, 3.6, 3.11</p>
+<p>Application: Wildfire in grassland and shrubland</p>
+<p>Notes: </p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1651,8 +1579,14 @@ Eqns: 3.5, 3.6, 3.11</p>
   </thead>
   <tbody>
       <tr>
+        <td><code>df</code></td>
+        <td><code>DataFrame</code></td>
+        <td><p>the weather data. This can be an Incident dataframe (<code>Incident.df</code>)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
         <td><code>curing</code></td>
-        <td><code>str</code></td>
+        <td><code>int</code></td>
         <td><p>Curing level (%)</p></td>
         <td><em>required</em></td>
       </tr>
@@ -1662,6 +1596,23 @@ Eqns: 3.5, 3.6, 3.11</p>
         <td><p>Grass state - natural (N), grazed (G), eaten out (E), (W) Woodlands, (F) Open forest</p></td>
         <td><em>required</em></td>
       </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td></td>
+      <td><p>a pandas dataframe including the fields</p>
+<pre><code>`fros_grass` the forward rate of spread (m/h)
+</code></pre></td>
+    </tr>
   </tbody>
 </table>
     </div>
@@ -1682,14 +1633,18 @@ Eqns: 3.5, 3.6, 3.11</p>
 
     <div class="doc doc-contents ">
 
-      <p>Cruz et al 2013 Semi-arid mallee heath.</p>
+      <p>Forward Rate of Spread (FROS) from Cruz et al 2013 Semi-arid mallee 
+heath model.</p>
 <p>Eqns: 4.17, 4.18</p>
-<p>n = 61
-wind_speed range 5 - 28 km/h
-temp range 16 - 39 C
-humidity range 7 - 80 %
-total_fuel range 3.8 - 14.8 t/ha
-explains 0.74 of variability </p>
+<p>Model development:</p>
+<ul>
+<li>n = 61</li>
+<li>wind_speed range 5 - 28 km/h</li>
+<li>temp range 16 - 39 C</li>
+<li>humidity range 7 - 80 %</li>
+<li>total_fuel range 3.8 - 14.8 t/ha</li>
+<li>explains 0.74 of variability </li>
+</ul>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1705,13 +1660,13 @@ explains 0.74 of variability </p>
       <tr>
         <td><code>cover</code></td>
         <td><code>int</code></td>
-        <td><p>overstory cover (%)</p></td>
+        <td><p>overstorey cover (%)</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>height</code></td>
         <td><code>float</code></td>
-        <td><p>overstory height (m)</p></td>
+        <td><p>overstorey height (m)</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
@@ -2482,12 +2437,14 @@ to models then adds fros values to <code>Incident.df</code> in the form
         <td><code>model</code></td>
         <td><code>list</code></td>
         <td><p>a list of the models to compare. Valid items
-include: <code>'mk5'</code> McArthur mk5 model, <code>'vesta'</code> The Project 
-VESTA model, <code>'vesta2'</code> The Vesta MkII model (dry). </p>
+include: <code>'mk5'</code> McArthur Mk5, <code>'vesta'</code> Project 
+VESTA, <code>'vesta2'</code> Vesta MkII (dry), <code>'mallee'</code>
+the mallee-heath. </p>
 <p>Also there is a little easter egg here and if you 
 put <code>'mc_v'</code> as the model it will get the moisture content (%)
 from the VESTA model, while <code>'mc_v2'</code> will get the moisture
-content from the Vesta II model</p></td>
+content from the Vesta II model and <code>'mc_m'</code> will get the 
+moisture content from the Mallee-Heath model.</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
@@ -2704,6 +2661,8 @@ Defaults to False.</p></td>
     <div class="doc doc-contents ">
 
       <p>Runs the McArthur Mk5 Forest Fire Danger Meter model.</p>
+<p>Requires that the Wind Adjustment Factor <code>'waf'</code> and Fine fuel load 
+(t/ha) <code>'fuel_load'</code> parameters are set. See <code>Incident.set_params()</code></p>
 <p>Adds the results to the <code>Incident.df</code></p>
 
     </div>
@@ -2717,7 +2676,7 @@ Defaults to False.</p></td>
 
 
 <h4 id="pyropy.firebehaviour.Incident.run_forest_vesta" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">run_forest_vesta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">run_forest_vesta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version_12</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
 </h4>
@@ -2725,9 +2684,36 @@ Defaults to False.</p></td>
     <div class="doc doc-contents ">
 
       <p>Runs the Project Vesta (fuel hazard scores) model.</p>
-<p>Uses the Equation in Cheney et al. 2012
-Adds the results to the <code>Incident.df</code></p>
+<p>Uses the Fuel Hazard Scores (FHS) described in:</p>
+<p>Hines, F. et al. 2010,  Overall Fuel Hazard Assessment Guide. 
+Dept of Natural Resources and Environment, East Melbourne, Vic.</p>
+<p>Requires that the surface FHS <code>'fhs_surf'</code>, the near
+surface FHS <code>'fhs_n_surf'</code> and the near surface fuel 
+height (cm) <code>'fuel_height_ns'</code> parameters are set. 
+See <code>Incident.set_params()</code></p>
+<p>Adds the results to the <code>Incident.df</code></p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>version_12</code></td>
+        <td></td>
+        <td><p>if <code>True</code> uses the Cheney et al. 2012 equation, 
+if <code>False</code> uses the Gould et al. 2008 version. 
+Defaults to <code>True</code>.           </p></td>
+        <td><code>True</code></td>
+      </tr>
+  </tbody>
+</table>
     </div>
 
   </div>
@@ -2747,29 +2733,13 @@ Adds the results to the <code>Incident.df</code></p>
     <div class="doc doc-contents ">
 
       <p>Runs the Project Vesta Mk2 model.</p>
+<p>Cruz, et al. 2022 'An Empirical-Based Model for Predicting the Forward 
+Spread Rate of Wildfires in Eucalypt Forests'. 
+International Journal of Wildland Fire. https://doi.org/10.1071/WF21068</p>
+<p>Requires that the Wind Adjustment Factor <code>'waf'</code>, surface fuel load 
+(t/ha) <code>'fuel_load'</code> and the understorey fuel height <code>'fuel_height_u'</code> 
+parameters are set. See <code>Incident.set_params()</code></p>
 <p>Adds the results to the <code>Incident.df</code></p>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="pyropy.firebehaviour.Incident.run_forest_vesta_08" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">run_forest_vesta_08</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Runs the Project Vesta (fuel hazard scores) model.
-Uses the Equation in Gould et al. 2008
-Adds the results to the <code>Incident.df</code></p>
 
     </div>
 
@@ -2790,6 +2760,60 @@ Adds the results to the <code>Incident.df</code></p>
     <div class="doc doc-contents ">
 
       <p>Runs the Project Vesta (fuel hazard ratings) model.</p>
+<p>Uses the Fuel Hazard Ratings (FHR) described in:</p>
+<p>Hines, F. et al. 2010,  Overall Fuel Hazard Assessment Guide. 
+Dept of Natural Resources and Environment, East Melbourne, Vic.</p>
+<p>Requires that the surface FHR <code>'fhr_surf'</code> and the near
+surface FHR <code>'fhr_n_surf'</code> parameters are set. 
+See <code>Incident.set_params()</code></p>
+<p>Adds the results to the <code>Incident.df</code></p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="pyropy.firebehaviour.Incident.run_grass" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_grass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Runs the Cheney et al. 1998 grass and woodland model.</p>
+<p>Requires that the grass fuel state (N, G, E, W or F) <code>'grass_state'</code> 
+and curing (%) <code>'curing'</code> parameters are set. 
+See <code>Incident.set_params()</code></p>
+<p>Adds the results to the <code>Incident.df</code></p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="pyropy.firebehaviour.Incident.run_mallee" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_mallee</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Runs the Cruz et al 2013 Semi-arid mallee heath model.</p>
+<p>Requires that the overstorey cover(%) <code>'os_cover'</code> 
+and overstorey height (m) parameters are set. 
+See <code>Incident.set_params()</code></p>
 <p>Adds the results to the <code>Incident.df</code></p>
 
     </div>

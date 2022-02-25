@@ -2,22 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>http://geoffysicist.github.io/PyroPy/</loc>
-         <lastmod>2022-02-24</lastmod>
+         <lastmod>2022-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://geoffysicist.github.io/PyroPy/license/</loc>
-         <lastmod>2022-02-24</lastmod>
+         <lastmod>2022-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://geoffysicist.github.io/PyroPy/modules/</loc>
-         <lastmod>2022-02-24</lastmod>
+         <lastmod>2022-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://geoffysicist.github.io/PyroPy/examples/compare_mc/</loc>
-         <lastmod>2022-02-24</lastmod>
+         <lastmod>2022-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
