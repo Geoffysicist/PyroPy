@@ -61,6 +61,8 @@ def test_run_forest_vesta(mock_incident):
     mock_incident.set_params(forest_vesta_params)
     mock_incident.run_forest_vesta()
     assert 'fros_vesta' in mock_incident.df.columns.values
+    mock_incident.run_forest_vesta(version_12=False)
+    assert 'fros_vesta_08' in mock_incident.df.columns.values
 
 def test_run_forest_vesta2(mock_incident):
     forest_vesta_params = {
@@ -80,6 +82,25 @@ def test_run_forest_vesta_fhr(mock_incident):
     mock_incident.set_params(forest_vesta_params)
     mock_incident.run_forest_vesta_fhr()
     assert 'fros_vesta_fhr' in mock_incident.df.columns.values
+
+def test_run_grass(mock_incident):
+    grass_params = {
+        'grass_state': 'G',
+        'curing': 90,
+    }
+    mock_incident.set_params(grass_params)
+    mock_incident.run_grass()
+    assert 'fros_grass' in mock_incident.df.columns.values
+
+def test_run_mallee(mock_incident):
+    mallee_params = {
+        'cover_o': 20,
+        'height_o': 3.5,
+    }
+    mock_incident.set_params(mallee_params)
+    mock_incident.run_mallee()
+    assert 'fros_mallee' in mock_incident.df.columns.values
+
 
 
 @pytest.fixture
@@ -106,10 +127,14 @@ def test_get_models(mock_incident):
 
 def test_compare_fbcalc(mock_incident):
     calc_fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
-    models = ['vesta']
+    models = ['mk5','vesta', 'vesta2', 'mallee']
     mock_incident.compare_fbcalc(calc_fn, models)
-    assert set(['fros_vesta','fros_vesta_fbcalc']).issubset(
-        set(mock_incident.df.columns.values)
+    assert set([
+        'fros_mk5_fbcalc',
+        'fros_vesta_fbcalc',
+        'fros_vesta2_fbcalc',
+        'fros_mallee_fbcalc',
+    ]).issubset(set(mock_incident.df.columns.values)
     )
     
 def test_set_fbcalc(mock_incident):
@@ -117,6 +142,10 @@ def test_set_fbcalc(mock_incident):
     ws = mock_incident.set_fbcalc(calc_fn)
     assert ws is True
     
-    
+def test_get_spread_direction(mock_incident):
+    mock_incident.get_spread_direction()
+    assert set(['spread_dir']).issubset(
+        set(mock_incident.df.columns.values)
+    )
 
 

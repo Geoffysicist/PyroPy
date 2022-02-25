@@ -44,6 +44,10 @@ class Incident(object):
         self.fuel_height_u = None
         self.fhr_surf = None
         self.fhr_n_surf = None
+        self.grass_state = None
+        self.curing = None
+        self.cover_o = None
+        self.height_o = None
 
         self.fbcalc_params_mk5 = {
             'waf': 'J4',
@@ -60,7 +64,16 @@ class Incident(object):
             'waf': 'O10',
             'fuel_load': 'F7',
             'fuel_height_u': 'C10',
+        }
 
+        # self.fbcalc_params_grass = {
+        #     'grass_state': '???', #This won't work for the way FBCalc is configured
+        #     'curing': 'F7',
+        # }
+
+        self.fbcalc_params_mallee = {
+            'cover_o': 'E4',
+            'height_o': 'E5',
         }
 
     def copy(self) -> Incident:
@@ -164,6 +177,9 @@ class Incident(object):
     def run_forest_mk5(self) -> None:
         """Runs the McArthur Mk5 Forest Fire Danger Meter model.
 
+        Requires that the Wind Adjustment Factor `'waf'` and Fine fuel load 
+        (t/ha) `'fuel_load'` parameters are set. See `Incident.set_params()`
+
         Adds the results to the `Incident.df`
         """
         forest_mk5_params = {
@@ -173,10 +189,25 @@ class Incident(object):
         if self.check_params(forest_mk5_params):
             self.df = fbs.ros_forest_mk5(self.df, self.waf, self.fuel_load)
 
-    def run_forest_vesta(self) -> None:
+    def run_forest_vesta(self, version_12 = True) -> None:
         """Runs the Project Vesta (fuel hazard scores) model.
 
+        Uses the Fuel Hazard Scores (FHS) described in:
+
+        Hines, F. et al. 2010,  Overall Fuel Hazard Assessment Guide. 
+        Dept of Natural Resources and Environment, East Melbourne, Vic.
+
+        Requires that the surface FHS `'fhs_surf'`, the near
+        surface FHS `'fhs_n_surf'` and the near surface fuel 
+        height (cm) `'fuel_height_ns'` parameters are set. 
+        See `Incident.set_params()`
+
         Adds the results to the `Incident.df`
+
+        Args:
+            version_12: if `True` uses the Cheney et al. 2012 equation, 
+                if `False` uses the Gould et al. 2008 version. 
+                Defaults to `True`.           
         """
         forest_vesta_params = {
             'fhs_surf': self.fhs_surf,
@@ -191,30 +222,21 @@ class Incident(object):
                 self.fhs_surf, 
                 self.fhs_n_surf, 
                 self.fuel_height_ns,
+                version_12,
             )
 
-    def run_forest_vesta_08(self) -> None:
-        """Runs the Project Vesta (fuel hazard scores) model.
-
-        Adds the results to the `Incident.df`
-        """
-        forest_vesta_params = {
-            'fhs_surf': self.fhs_surf,
-            'fhs_n_surf': self.fhs_n_surf,
-            'fuel_height_ns': self.fuel_height_ns,
-        }
-
-
-        if self.check_params(forest_vesta_params):
-            self.df = fbs.ros_forest_vesta_08(
-                self.df, 
-                self.fhs_surf, 
-                self.fhs_n_surf, 
-                self.fuel_height_ns,
-            )
 
     def run_forest_vesta_fhr(self) -> None:
-        """Runs the Project Vesta (fuel hazard scores) model.
+        """Runs the Project Vesta (fuel hazard ratings) model.
+    
+        Uses the Fuel Hazard Ratings (FHR) described in:
+
+        Hines, F. et al. 2010,  Overall Fuel Hazard Assessment Guide. 
+        Dept of Natural Resources and Environment, East Melbourne, Vic.
+
+        Requires that the surface FHR `'fhr_surf'` and the near
+        surface FHR `'fhr_n_surf'` parameters are set. 
+        See `Incident.set_params()`
 
         Adds the results to the `Incident.df`
         """
@@ -231,7 +253,15 @@ class Incident(object):
             )
 
     def run_forest_vesta2(self) -> None:
-        """Runs the Project VestaII model.
+        """Runs the Project Vesta Mk2 model.
+
+        Cruz, et al. 2022 'An Empirical-Based Model for Predicting the Forward 
+        Spread Rate of Wildfires in Eucalypt Forests'. 
+        International Journal of Wildland Fire. https://doi.org/10.1071/WF21068
+
+        Requires that the Wind Adjustment Factor `'waf'`, surface fuel load 
+        (t/ha) `'fuel_load'` and the understorey fuel height `'fuel_height_u'` 
+        parameters are set. See `Incident.set_params()`
 
         Adds the results to the `Incident.df`
         """
@@ -250,7 +280,53 @@ class Incident(object):
                 self.fuel_height_u,
             )
 
-    
+    def run_grass(self) -> None:
+        """Runs the Cheney et al. 1998 grass and woodland model.
+
+        Requires that the grass fuel state (N, G, E, W or F) `'grass_state'` 
+        and curing (%) `'curing'` parameters are set. 
+        See `Incident.set_params()`
+
+        Adds the results to the `Incident.df`
+        """
+        grass_params = {
+            'grass_state': self.grass_state,
+            'curing': self.curing,
+        }
+
+        if self.check_params(grass_params):
+            self.df = fbs.ros_grass(
+                self.df,
+                self.grass_state,
+                self.curing,
+            )
+
+    def run_mallee(self) -> None:
+        """Runs the Cruz et al 2013 Semi-arid mallee heath model.
+
+        Requires that the overstorey cover(%) `'os_cover'` 
+        and overstorey height (m) parameters are set. 
+        See `Incident.set_params()`
+
+        Adds the results to the `Incident.df`
+        """
+        mallee_params = {
+            'cover_o': self.cover_o,
+            'height_o': self.height_o,
+        }
+
+        if self.check_params(mallee_params):
+            self.df = fbs.ros_mallee(
+                self.df,
+                self.cover_o,
+                self.height_o,
+            )
+
+    def get_spread_direction(self) -> None:
+        """Add the fire spread direction measured in degrees to the incident df.
+        """
+        self.df['spread_dir'] = fbs.spread_direction(self.df)
+
 
     def print(self, head=False) -> None:
         """Prints the field headings and rows of the `Dataframe`
@@ -290,13 +366,15 @@ class Incident(object):
         Args:
             fn (str): path to the FireBehaviourCalcs spreadsheet
             model (list): a list of the models to compare. Valid items
-                include: `'mk5'` McArthur mk5 model, `'vesta'` The Project 
-                VESTA model, `'vesta2'` The Vesta MkII model (dry). 
+                include: `'mk5'` McArthur Mk5, `'vesta'` Project 
+                VESTA, `'vesta2'` Vesta MkII (dry), `'mallee'`
+                the mallee-heath. 
                 
                 Also there is a little easter egg here and if you 
                 put `'mc_v'` as the model it will get the moisture content (%)
                 from the VESTA model, while `'mc_v2'` will get the moisture
-                content from the Vesta II model
+                content from the Vesta II model and `'mc_m'` will get the 
+                moisture content from the Mallee-Heath model.
 
         Returns:
             None:
@@ -305,8 +383,10 @@ class Incident(object):
             'mk5': ['Forest(McArthur)', 'O', self.fbcalc_params_mk5],
             'vesta': ['Forest(VESTA)', 'P', self.fbcalc_params_vesta],
             'vesta2': ['VESTA Mk2 Dry', 'Y', self.fbcalc_params_vesta2],
+            'mallee': ['Mallee-Heath', 'T', self.fbcalc_params_mallee],
             'mc_v': ['Forest(VESTA)', 'M', {}],
             'mc_v2': ['VESTA Mk2 Dry', 'N', {}],
+            'mc_m': ['Mallee-Heath', 'L', {}],
         }
 
         # TODO this need to happen after the params are set.
@@ -328,7 +408,6 @@ class Incident(object):
                         )]
                     field = f'fros_{model}_fbcalc'
                     if not model_params: field = f'{model}_fbcalc' #not a fros model
-
                     self.df[field] = ros_vals
                     if model_params: self.df[field] = self.df[field].astype(int)
 

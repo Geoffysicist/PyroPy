@@ -13,6 +13,8 @@ Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.
 All spread models take a pandas weather dataframe and model specific 
 parmeters as arguments.
 
+Functions can be called directly or as a method of PyroPy `Incident`.
+
 The weather dataframe must include the following exact fields (column headings):
 ```
     date_time: a pandas datetime field
@@ -55,8 +57,7 @@ def ros_forest_mk5(
     severe.
 
     Args:
-        df: a pandas dataframe which must contain the specified the weather
-            data. This can be an Incident dataframe (`Incident.df`)
+        df: the weather data. This can be an Incident dataframe (`Incident.df`)
         wrf: wind reduction factor
         fuel_load: fine fule load t/ha
 
@@ -81,6 +82,7 @@ def ros_forest_vesta(
         fhs_surf: float,
         fhs_n_surf: float,
         fuel_height_ns: float, #cm
+        version_12: bool = True,
     ) -> DataFrame:
     """Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
     scores
@@ -93,11 +95,12 @@ def ros_forest_vesta(
     are severe and use McArthur 1973a Mk5 Forest Fire Danger Meter.
 
     Args:
-        df: a pandas dataframe which must contain the specified the weather
-            data. This can be an Incident dataframe (`Incident.df`)
+        df: the weather data. This can be an Incident dataframe (`Incident.df`)
         fhs_surf: surface fuel hazard score (0-4)
         fhs_n_surf: near surface fuel hazard score (0-4)
         fuel_height_ns: near surface fuel height (cm)
+        version_12: if `True` uses the Cheney et al. 2012 equation, if `False` uses
+            the gould et al. 2008 version. Defaults to `True`
 
     Returns:
         a pandas dataframe including the fields
@@ -115,12 +118,20 @@ def ros_forest_vesta(
     # determine moisture function
     mf = 18.35 * ros_df['mc_v']**-1.495
 
-    # determine the ROS
-    ros_df['fros_vesta'] = np.where(
-        ros_df['wind_speed'] > 5,
-        30.0 + 1.531 * (ros_df['wind_speed']-5)**0.8576 * fhs_surf**0.93 * (fhs_n_surf*fuel_height_ns)**0.637 * 1.03,
-        30
-    )
+    if version_12:
+        # determine the ROS using Cheney et al. 2012
+        ros_df['fros_vesta'] = np.where(
+            ros_df['wind_speed'] > 5,
+            30.0 + 1.531 * (ros_df['wind_speed']-5)**0.8576 * fhs_surf**0.93 * (fhs_n_surf*fuel_height_ns)**0.637 * 1.03,
+            30
+        )
+    else:
+        # determine the ROS using Gould et al 2008
+        ros_df['fros_vesta_08'] = np.where(
+            ros_df['wind_speed'] > 5,
+            30.0 + 3.102 * (ros_df['wind_speed']-5)**0.904 * m.exp(0.279*fhs_surf+0.611*fhs_n_surf+0.013*fuel_height_ns),
+            30
+        )
 
     ros_df['fros_vesta'] = (ros_df['fros_vesta']* mf).astype(int)
 
@@ -138,11 +149,10 @@ def ros_forest_vesta_fhr(
 
     Application: Wildfire in Sclerophyll (Eucalypt) forests
    
-    Notes: anything else about the model.
+    Notes: 
 
     Args:
-        df: a pandas dataframe which must contain the specified the weather
-            data. This can be an Incident dataframe (`Incident.df`)
+        df: the weather data. This can be an Incident dataframe (`Incident.df`)
         fhr_surf: Surface Fuel Hazard Rating (L, M, H, V, E)
         fhr_n_surf: Near Surface Fuel Hazard Rating (L, M, H, V, E)
 
@@ -169,54 +179,55 @@ def ros_forest_vesta_fhr(
         30.0 + 2.3117 * (ros_df['wind_speed']-5)**0.8364 * m.exp(surf_coeff+near_surf_coeff) * 1.02,
         30
     )
+
     ros_df['fros_vesta_fhr'] = (ros_df['fros_vesta_fhr']*mf).astype(int)
 
     return ros_df
 
-def ros_forest_vesta_08(
-        df: DataFrame,
-        fhs_surf: float,
-        fhs_n_surf: float,
-        fuel_height_ns: float, #cm
-    ) -> DataFrame:
-    """Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
-    scores from Gould et al. 2008 Eqn:4 
+# def ros_forest_vesta_08(
+#         df: DataFrame,
+#         fhs_surf: float,
+#         fhs_n_surf: float,
+#         fuel_height_ns: float, #cm
+#     ) -> DataFrame:
+#     """Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
+#     scores from Gould et al. 2008 Eqn:4 
 
-    Application: Wildfire in Sclerophyll (Eucalypt) forests
+#     Application: Wildfire in Sclerophyll (Eucalypt) forests
    
-    Notes: Superceded by Cheney et al 2012
+#     Notes: Superceded by Cheney et al 2012
 
-    Args:
-        df: a pandas dataframe which must contain the specified the weather
-            data. This can be an Incident dataframe (`Incident.df`)
-        fhs_surf: surface fuel hazard score (0-4)
-        fhs_n_surf: near surface fuel hazard score (0-4)
-        fuel_height_ns: near surface fuel height (cm)
+#     Args:
+#         df: a pandas dataframe which must contain the specified the weather
+#             data. This can be an Incident dataframe (`Incident.df`)
+#         fhs_surf: surface fuel hazard score (0-4)
+#         fhs_n_surf: near surface fuel hazard score (0-4)
+#         fuel_height_ns: near surface fuel height (cm)
 
-    Returns:
-        a pandas dataframe including the fields
+#     Returns:
+#         a pandas dataframe including the fields
 
-            `mc` the fuel moisture conent (%)
-            `fros_vesta` the forward rate of spread (m/h)
-    """
+#             `mc` the fuel moisture conent (%)
+#             `fros_vesta` the forward rate of spread (m/h)
+#     """
 
-    ros_df = df.copy(deep=True)
+#     ros_df = df.copy(deep=True)
     
-    if not 'mc_v' in ros_df.columns.values:
-        ros_df['mc_v'] = get_mc_v(ros_df)
+#     if not 'mc_v' in ros_df.columns.values:
+#         ros_df['mc_v'] = get_mc_v(ros_df)
 
-    # determine moisture function
-    mf = 18.35 * ros_df['mc_v']**-1.495
+#     # determine moisture function
+#     mf = 18.35 * ros_df['mc_v']**-1.495
 
-    # determine the ROS
-    ros_df['fros_vesta_08'] = np.where(
-        ros_df['wind_speed'] > 5,
-        30.0 + 3.102 * (ros_df['wind_speed']-5)**0.904 * m.exp(0.279*fhs_surf+0.611*fhs_n_surf+0.013*fuel_height_ns),
-        30
-    )
+#     # determine the ROS
+#     ros_df['fros_vesta_08'] = np.where(
+#         ros_df['wind_speed'] > 5,
+#         30.0 + 3.102 * (ros_df['wind_speed']-5)**0.904 * m.exp(0.279*fhs_surf+0.611*fhs_n_surf+0.013*fuel_height_ns),
+#         30
+#     )
 
-    ros_df['fros_vesta_08'] = (ros_df['fros_vesta_08']* mf).astype(int)
-    return ros_df
+#     ros_df['fros_vesta_08'] = (ros_df['fros_vesta_08']* mf).astype(int)
+#     return ros_df
 
 
 def ros_forest_vesta2(
@@ -229,15 +240,17 @@ def ros_forest_vesta2(
     """Forward Rate of Spread (FROS) from Project Vesta using fuel hazard 
     scores
 
-    Eqn: 5.28
+    Cruz, et al. 2022 'An Empirical-Based Model for Predicting the Forward 
+    Spread Rate of Wildfires in Eucalypt Forests'. 
+    International Journal of Wildland Fire. https://doi.org/10.1071/WF21068
+
 
     Application: Wildfire in Sclerophyll (Eucalypt) forests
    
     Notes: 
 
     Args:
-        df: a pandas dataframe which must contain the specified the weather
-            data. This can be an Incident dataframe (`Incident.df`)
+        df: the weather data. This can be an Incident dataframe (`Incident.df`)
         waf: wind adjustment factor (1-6)
         fuel_load: near surface fuel load (t/ha)
         fuel_height_u: understorey fuel height (cm)
@@ -323,14 +336,25 @@ def ros_forest_vesta2(
 def ros_grass(
     df: DataFrame, 
     state: str,
-    curing: str,
+    curing: int,
 ):
-    """Cheney et al. 1998 grass model.
+    """Forward Rate of Spread (FROS) from Cheney et al. 1998 grass model.
+    
     Eqns: 3.5, 3.6, 3.11
 
+    Application: Wildfire in grassland and shrubland
+   
+    Notes: 
+
     Args:
+        df: the weather data. This can be an Incident dataframe (`Incident.df`)
         curing: Curing level (%)
         state: Grass state - natural (N), grazed (G), eaten out (E), (W) Woodlands, (F) Open forest
+    
+    Returns:
+        a pandas dataframe including the fields
+        
+            `fros_grass` the forward rate of spread (m/h)
     """
     curing = max(20, curing)
 
@@ -343,7 +367,7 @@ def ros_grass(
     # ros_df['mc_g'] = 9.58 - 0.205*ros_df['temp'] + 0.138 * ros_df['humidity']
     
     # fuel moisture coeff Eqn 3.7
-    ros_df['fm_coeff'] = np.where(
+    fm_coeff = np.where(
         ros_df['mc_g'] < 12,
         np.exp(-0.108*ros_df['mc_g']),
         np.where(
@@ -361,8 +385,8 @@ def ros_grass(
         # Eqn 3.5
         ros_df['fros_grass'] = np.where(
             ros_df['wind_speed'] > 5,
-            (1.4 + 0.838*(ros_df['wind_speed'] - 5)**0.844)*ros_df['fm_coeff']*curing_coeff,
-            (0.054 + 0.269*ros_df['wind_speed'])*ros_df['fm_coeff']*curing_coeff
+            (1.4 + 0.838*(ros_df['wind_speed'] - 5)**0.844)*fm_coeff*curing_coeff,
+            (0.054 + 0.269*ros_df['wind_speed'])*fm_coeff*curing_coeff
         )
 
         if state == 'W':
@@ -374,8 +398,8 @@ def ros_grass(
         # Eqn 3.6
         ros_df['fros_grass'] = np.where(
             ros_df['wind_speed'] > 5,
-            (1.1 + 0.715*(ros_df['wind_speed'] - 5)**0.844)*ros_df['fm_coeff']*curing_coeff,
-            (0.054 + 0.209*ros_df['wind_speed'])*ros_df['fm_coeff']*curing_coeff
+            (1.1 + 0.715*(ros_df['wind_speed'] - 5)**0.844)*fm_coeff*curing_coeff,
+            (0.054 + 0.209*ros_df['wind_speed'])*fm_coeff*curing_coeff
         )
         if state == 'E':
             # Cruz et al. argue that should be half of G but no studies
@@ -391,20 +415,23 @@ def ros_mallee(
     cover: int,
     height: float,
 ) -> DataFrame:
-    """Cruz et al 2013 Semi-arid mallee heath.
+    """Forward Rate of Spread (FROS) from Cruz et al 2013 Semi-arid mallee 
+    heath model.
 
     Eqns: 4.17, 4.18
 
-    n = 61
-    wind_speed range 5 - 28 km/h
-    temp range 16 - 39 C
-    humidity range 7 - 80 %
-    total_fuel range 3.8 - 14.8 t/ha
-    explains 0.74 of variability 
+    Model development:
+
+    - n = 61
+    - wind_speed range 5 - 28 km/h
+    - temp range 16 - 39 C
+    - humidity range 7 - 80 %
+    - total_fuel range 3.8 - 14.8 t/ha
+    - explains 0.74 of variability 
 
     Args:
-        cover: overstory cover (%)
-        height: overstory height (m)
+        cover: overstorey cover (%)
+        height: overstorey height (m)
     
     Returns:
         `DataFrame` including `fros_mallee`, `mc_m`
@@ -415,20 +442,6 @@ def ros_mallee(
 
     if not 'mc_m' in ros_df.columns.values:
         ros_df['mc_m'] = get_mc_m(ros_df)
-
-    # #set delta = 1 if between 12:00 and 17:00 Sep-Mar, else 0
-    # ros_df['delta'] = 0
-    # ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month > 3, 1)
-    # ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.month < 10, 1)
-    # ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour > 11, 0)
-    # ros_df['delta'] = ros_df['delta'].where(ros_df['date_time'].dt.hour < 18, 0)
-    
-    # ros_df['mc_m'] = (
-    #     4.74 
-    #     + 0.108*ros_df['humidity'] 
-    #     - 0.1*(ros_df['temp'] - 25)
-    #     - ros_df['delta']*(1.68+0.028*ros_df['humidity'])
-    #     )
 
     ros_df['p_surface'] = (
         1 + np.exp(-(
@@ -557,7 +570,7 @@ def get_mc_v(df: DataFrame) -> Series:
         3.08 + (0.198*df['humidity']) - (0.0483*df['temp'])
     )
 
-    return Series(mc)
+    return Series(mc.round(1))
 
 def get_mc_g(df: DataFrame) -> Series:
     """Calculates the grass moisture content using equation 3.8
@@ -572,7 +585,7 @@ def get_mc_g(df: DataFrame) -> Series:
 
     mc = 9.58 - 0.205*df['temp'] + 0.138 * df['humidity']
     
-    return mc
+    return Series(mc.round(1))
 
 def get_mc_m(df: DataFrame) -> Series:
     """Calculates the mallee moisture content using equation 4.15
@@ -600,7 +613,7 @@ def get_mc_m(df: DataFrame) -> Series:
         - ros_df['delta']*(1.68+0.028*ros_df['humidity'])
         )
 
-    return mc
+    return Series(mc.round(1))
 
 
 
