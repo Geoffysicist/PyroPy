@@ -1,3 +1,4 @@
+from typing import is_typeddict
 from pandas import DataFrame, Series
 import pytest
 import warnings
@@ -128,7 +129,7 @@ def test_get_models(mock_incident):
 def test_compare_fbcalc(mock_incident):
     calc_fn = 'tests/.data/FireBehaviourCalcs_Test.xlsm'
     models = ['mk5','vesta', 'vesta2', 'mallee']
-    mock_incident.compare_fbcalc(calc_fn, models)
+    fbcalc_params = mock_incident.compare_fbcalc(calc_fn, models)
     assert set([
         'fros_mk5_fbcalc',
         'fros_vesta_fbcalc',
@@ -136,6 +137,7 @@ def test_compare_fbcalc(mock_incident):
         'fros_mallee_fbcalc',
     ]).issubset(set(mock_incident.df.columns.values)
     )
+    assert isinstance(fbcalc_params, dict)
     
 def test_set_fbcalc(mock_incident):
     calc_fn = 'tests/.data/FireBehaviourCalcs_Test_out.xlsm'
