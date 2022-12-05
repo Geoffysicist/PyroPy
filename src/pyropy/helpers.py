@@ -1,17 +1,18 @@
 """Utility scripts for fire behaviour analysis."""
+from pathlib import Path
 from datetime import datetime, timedelta
 import numpy as np
+import pandas as pd
+from pandas import DataFrame
 import os
 import warnings
-from openpyxl import Workbook, load_workbook
-from pandas import DataFrame
+# from openpyxl import Workbook, load_workbook
 
-# if  __name__ == '__main__':
-#     from firebehaviour import Incident
-# else:
-#     from .firebehaviour import Incident
+
+
 
 def check_filepath(fn: str, suffix: str = None) -> bool:
+    'TODO replace this with pathlib equivalent'
     valid = os.path.isfile(fn)
     if not valid: warnings.warn(f'{fn} is not a valid filename')
     if suffix:
@@ -80,7 +81,30 @@ def adjust_precision(df: DataFrame, precision_dict: dict) -> DataFrame:
 
     return df
 
+def iwf_to_csv(iwf_fn, csv_fn) -> Path:
+    """str
 
+    Args:
+        iwf_fn (Path): input IWF path and filename.
+            If not a pathlib Path should be a literal string on windows
+            to deal with the backslash problem. To make a string literal
+            put the letter r in front of the quotation marks
+        csv_fn (Path): output csv path and filename.
+            If not a pathlib Path should be a literal string on windows
+            to deal with the backslash problem. To make a string literal
+            put the letter r in front of the quotation marks
+    """
+
+    iwf_fn, csv_fn = Path(iwf_fn), Path(csv_fn)
+    
+    match = 'Incident'
+    dfs = pd.read_html(iwf_fn, match=match, header=0)
+    dfs[0].to_csv(csv_fn, index=False)
+    match = 'Local'
+    dfs = pd.read_html(iwf_fn, match=match, header=3)
+    dfs[0].to_csv(csv_fn, mode='a', index=False)
+
+    return csv_fn
 
 
 

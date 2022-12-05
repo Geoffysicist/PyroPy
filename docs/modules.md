@@ -11,3 +11,7 @@
 ## Fire Behaviour
 
 ### ::: pyropy.firebehaviour
+
+## Helpers
+
+### ::: pyropy.firebehaviour

@@ -46,6 +46,7 @@ df = gridded_to_df('your_file_path.csv')
 
 import pandas as pd
 from pandas import DataFrame
+from pathlib import Path
 from openpyxl import load_workbook
 
 if __name__ == '__main__':
@@ -281,5 +282,57 @@ def df_to_amicus(df, fn: str) -> DataFrame:
 
     return df_to_weather(df, fn, col_names=FIELDS_AMICUS, datetime_format="%d/%m/%Y %H:%M", encoding='cp1252')
 
+def afdrs_meteograms_to_df(path) -> DataFrame:
+    """"Creates a `DataFrame` from the indivudual csv downloads from
+    AFDRS viewer metoegrams
+
+    Writes the data to a `*.csv` file
+    
+    The output fields are:
+    ```
+    'date_time': 'Date time',
+    'date': 'Date'
+    'time': 'Time',
+    'temp': 'Air temperature (°C)',
+    'humidity': 'Relative humidity (%)',
+    'wind_speed': '10 m wind speed (km/h)',
+    'wind_dir': 'Wind direction (°)'
+    ```
+    
+    Args:
+    
+    Returns:
+        a pandas `DataFrame` with Amicus compatible fields
+    """
+
+    fields = {
+        'date_time': 'Date time',
+        'date': 'Date',
+        'time': 'Time',
+        'temp': 'Air temperature (°C)',
+        'humidity': 'Relative humidity (%)',
+        'wind_dir': 'Wind direction (°)',
+        'wind_speed': '10 m wind speed (km/h)',
+    }
+
+    filenames = (
+        'Relative Humidity.csv',
+        'Wind Direction.csv',
+        'Wind Speed.csv'
+    )
+
+    df = pd.read_csv(path / 'Temperature.csv')
+    
+    for fn in filenames:
+        _df = pd.read_csv(path / fn)
+        df = df.merge(_df, how='inner')
+
+    return df
+
+
 if __name__ == '__main__':
-    pass
+    path = Path(r"C:\Users\geoffg\Documents\Incidents\20221203_Redhead\AFDRS_downloads")
+    df = afdrs_meteograms_to_df(path)
+    print(df.head())
+
+    out_path = Path()

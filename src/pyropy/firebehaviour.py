@@ -19,6 +19,7 @@ else:
     from . import spreadmodels as fbs
     from . import helpers as fbh
 
+#TODO copmare fbcalc params to other params
 class Incident(object):
     """A wildfire incident.
 
@@ -49,6 +50,7 @@ class Incident(object):
         self.cover_o = None
         self.height_o = None
 
+        #TODO put these in a yaml file
         self.fbcalc_params_mk5 = {
             'waf': 'J4',
             'fuel_load': 'C4', 
@@ -355,13 +357,15 @@ class Incident(object):
                 return False
         return True
 
-    def compare_fbcalc(self, fn: str, models: list) -> None:
+    def compare_fbcalc(self, fn: str, models: list) -> dict:
         """Loads results from an FireBehaviourCalcs spreadsheet into the 
         `Incident.df`.
 
-        Only loads the pages from FireBehaviourCalcs that have correspond 
-        to models then adds fros values to `Incident.df` in the form 
-        `'fros_{model}_fbcalc'` 
+        Only loads the pages from FireBehaviourCalcs that are included in 
+        `models` then adds fros values to `Incident.df` in the form 
+        `'fros_{model}_fbcalc'`
+
+        Also creates a dictionary of the fbcalc parameters relevant to the models 
 
         Args:
             fn (str): path to the FireBehaviourCalcs spreadsheet
@@ -377,7 +381,7 @@ class Incident(object):
                 moisture content from the Mallee-Heath model.
 
         Returns:
-            None:
+            dict: dictionary of fbcalc model params
         """
         fbcalc_refs = {
             'mk5': ['Forest(McArthur)', 'O', self.fbcalc_params_mk5],
@@ -389,12 +393,14 @@ class Incident(object):
             'mc_m': ['Mallee-Heath', 'L', {}],
         }
 
+        self.fbcalc_params = {}
+
         # TODO this need to happen after the params are set.
-        run_model_functions = {
-            'mk5': self.run_forest_mk5,
-            'vesta': self.run_forest_vesta,
-            'vesta2': self.run_forest_vesta2,
-        }
+        # run_model_functions = {
+        #     'mk5': self.run_forest_mk5,
+        #     'vesta': self.run_forest_vesta,
+        #     'vesta2': self.run_forest_vesta2,
+        # }
 
         if fbh.check_filepath(fn, suffix='xlsm'):
             wb = load_workbook(fn, data_only=True) #, keep_vba=True
@@ -416,10 +422,13 @@ class Incident(object):
                         for (param, address) in model_params.items()
                     }
 
-                    self.set_params(params)
-                    if model in run_model_functions.keys(): #trick it into getting columns that aren't models like mc
-                        run_model_functions[model]()            
-        return None
+                    for key, value in params.items():
+                        self.fbcalc_params[key] = value
+
+                    # self.set_params(params)
+                    # if model in run_model_functions.keys(): #trick it into getting columns that aren't models like mc
+                    #     run_model_functions[model]()            
+        return self.fbcalc_params
 
     def compare_amicus(self, fn: str, model: str) -> None:
         if fbh.check_filepath(fn, suffix='csv'):
