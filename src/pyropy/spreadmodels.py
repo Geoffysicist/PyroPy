@@ -8,26 +8,9 @@ Unless otherwise indicated all models have been taken from:
 (2015) A Guide to Rate of Fire Spread Models for Australian Vegetation, 
 CSIRO Land & Water and AFAC, Melbourne, Vic 125 pp. 
 
-Unless otherwise indicated all equations numbers also refer to Cruz et al. 2015.
+Unless otherwise indicated all equations numbers refer to Cruz et al. 2015.
 
-All spread models take a pandas weather dataframe and model specific 
-parmeters as arguments.
-
-Functions can be called directly or as a method of PyroPy `Incident`.
-
-The weather dataframe must include the following exact fields (column headings):
-```
-    date_time: a pandas datetime field
-    temp: Air temerature (°C)
-    humidity: Relative humidity (%)
-    wind_speed: 10 m wind speed (km/h)
-    wind_dir: Wind direction (°)
-```
-Ideally the weather dataframe should include a drought factor though this
-can be added as a parameter. TODO add error checking for this!
-
-The `weather` module provides function for reading `*.csv` files into 
-dataframes from standard sources
+Functions can be called directly or as a method of a PyroPy `Incident`.
 """
 
 # TODO:
@@ -40,12 +23,35 @@ import numpy as np
 from pandas import DataFrame, Series
 import math as m
 
-def ros_forest_mk5(
-        df: DataFrame, 
-        wrf: float, 
-        fuel_load: float,
-    ) -> DataFrame:
-    """Forward Rate of Spread (FROS) from McArthur Mk5 Forest Fire Danger Meter.
+def FFDI(temperature: Series, rh: Series, wind_speed : Series, DF: Series, wrf: float = 3) -> Series:
+    """returns McArthur Forest Fire Danger Index (FFDI).
+    
+    Uses Eqn 5.19.
+
+    If a drought factor (column heading = `drought`) is present in the weather
+    dataframe then this is used, otherwise a drought factor must be supplied or
+    the drought factor defaults to 9.
+
+    if `flank=True` the `ffdi` is calculated for a wind speed = 0
+
+    Args:
+        temperature: air temperature (C)
+        rh: relative humidity (%)
+        wind_speed: 10m open wind speed (km/h)
+        DF: drought factor
+        wrf: wind reduction factor (usual range 2.5 to 6)
+
+    Returns:
+        FFDI.
+    """
+    ffdi = 2.0*np.exp(-0.450 + 0.987*np.log(DF) - 0.0345*rh + 0.0338*temperature + 0.0234*wind_speed*3/wrf )
+    
+    return ffdi.round(1)
+
+
+def ros_forest_mk5(ffdi: Series, fuel_load: float) -> Series:
+
+    """returns Forward Rate of Spread (FROS) from McArthur Mk5 Forest Fire Danger Meter.
     
     Eqn: 5.27
 
@@ -57,26 +63,40 @@ def ros_forest_mk5(
     severe.
 
     Args:
-        df: the weather data. This can be an Incident dataframe (`Incident.df`)
-        wrf: wind reduction factor
-        fuel_load: fine fule load t/ha
+        ffdi: McArthur Mk5 FFDI
+        fuel_load: fine fuel load t/ha
 
     Returns:
         a pandas dataframe including the fields
             
             `fros_mk5` the forward rate of spread (m/h)
     """
-    ros_df = df.copy(deep=True)
-    
-    #TODO should we always calculate this?
-    # if not ('ffdi' in ros_df.columns): ros_df['ffdi'] = get_FFDI(df, wrf)
-    ros_df['ffdi'] = get_FFDI(df, wrf)
+  
+    return (0.0012*ffdi*fuel_load*1000).astype(int) #convert to m/h
 
-    ros_df['fros_mk5'] = (0.0012*ros_df['ffdi']*fuel_load*1000).astype(int) #convert to m/h
-    # ros_df['fros_mk5'].round(1)
+def mc_vesta(date_time: Series, temperature: Series, rh: Series) -> Series:
+    """Calculates VESTA the moisture content using equation 5.30
 
-    return ros_df
+    Args:
+        date_time: a series of datetime
+        temperature: air temperature (C)
+        rh: relative humidity (%)
 
+    Returns:
+        Series: the fine dead fuel moisture content (%)
+    """
+
+    mc = np.where(
+        (date_time.dt.hour > 6) & (date_time.dt.hour < 20),
+        np.where(
+            (date_time.dt.hour > 12) & (date_time.dt.hour <= 17), 
+            2.76 + (0.124*rh) - (0.0187*temperature), 
+            3.6 + (0.169*rh) - (0.045*temperature)
+        ),
+        3.08 + (0.198*rh) - (0.0483*temperature)
+    )
+
+    return Series(mc.round(1))
 def ros_forest_vesta(
         df: DataFrame,
         fhs_surf: float,
@@ -506,71 +526,6 @@ def spread_direction(df: DataFrame) -> Series:
 
     return Series(fros_dir)
 
-def get_FFDI(
-        df: DataFrame, 
-        wrf: int = 3, 
-        flank: bool=False, 
-        DF: int=9,
-    ) -> Series:
-    """McArthur Forest Fire Danger Index (FFDI).
-    
-    Uses Eqn 5.19.
-
-    If a drought factor (column heading = `drought`) is present in the weather
-    dataframe then this is used, otherwise a drought factor must be supplied or
-    the drought factor defaults to 9.
-
-    if `flank=True` the `ffdi` is calculated for a wind speed = 0
-
-    Args:
-        df: a pandas dataframe which must contain the specified the weather
-            data. This can be an Incident dataframe (`Incident.df`)
-        wrf: a wind reduction factor
-        flank: if `flank=True` the ffdi is calculated for a wind speed = 0
-        DF: drought factor, this is only used if there is no `drought` in the 
-            DataFrame
-
-    Returns:
-        a pandas Series of FFDI.
-    """
-    if flank:
-        wind_speed = 0
-    else:
-        wind_speed = df['wind_speed']
-
-    if not ('drought' in df.columns): df['drought'] = DF
-
-    ffdi = 2.0*np.exp(
-        -0.450 + 0.987*np.log(df['drought'])
-        -0.0345*df['humidity']
-        +0.0338*df['temp']
-        +0.0234* wind_speed * 3 / wrf 
-        )
-    
-    return Series(ffdi.round(1))
-
-def get_mc_v(df: DataFrame) -> Series:
-    """Calculates VESTA the moisture content using equation 5.30
-
-    Args:
-        df (DataFrame): a pandas dataframe which must contain the specified the weather
-            data. This can be an Incident dataframe (`Incident.df`)
-
-    Returns:
-        Series: the fine dead fuel moisture content (%)
-    """
-
-    mc = np.where(
-        (df['date_time'].dt.hour > 6) & (df['date_time'].dt.hour < 20),
-        np.where(
-            (df['date_time'].dt.hour > 12) & (df['date_time'].dt.hour <= 17), 
-            2.76 + (0.124*df['humidity']) - (0.0187*df['temp']), 
-            3.6 + (0.169*df['humidity']) - (0.045*df['temp'])
-        ),
-        3.08 + (0.198*df['humidity']) - (0.0483*df['temp'])
-    )
-
-    return Series(mc.round(1))
 
 def get_mc_g(df: DataFrame) -> Series:
     """Calculates the grass moisture content using equation 3.8

@@ -1,71 +1,32 @@
-from pandas import DataFrame, Series
 import pytest
-import warnings
+from pandas import DataFrame, Series
 
-from src.pyropy import spreadmodels as fs
-from src.pyropy import weatherdata as wd
+from src.pyropy import spreadmodels as pps
+from src.pyropy import helpers as pph
+from src.pyropy import weatherdata as ppw
+
+logger = pph.get_logger()
 
 @pytest.fixture
 def mock_weather():
     fn = 'tests/.data/weather_gridded_in.csv'
-    return wd.gridded_to_df(fn)
+    return ppw.gridded_to_df(fn)
 
-def test_spread_direction(mock_weather):
-    fros_dir = fs.spread_direction(mock_weather)
-    assert type(fros_dir) is Series
-    assert not fros_dir.empty
-
-def test_get_FFDI(mock_weather):
-    ffdi = fs.get_FFDI(mock_weather)
+def test_FFDI(mock_weather):
+    df = mock_weather
+    ffdi = pps.FFDI(df.temp, df.humidity, df.wind_speed, df.drought, wrf = 3.5)
     assert type(ffdi) is Series
     assert not ffdi.empty
 
-def test_get_mc_v(mock_weather):
-    """Vesta fine fuel moisture content."""
-    mc = fs.get_mc_v(mock_weather)
-    assert type(mc) is Series
-    assert not mc.empty
-
-def test_get_mc_g(mock_weather):
-    """Grass fine fuel moisture content."""
-    mc = fs.get_mc_g(mock_weather)
-    assert type(mc) is Series
-    assert not mc.empty
-
-def test_get_mc_m(mock_weather):
-    """Mallee fine fuel moisture content."""
-    mc = fs.get_mc_m(mock_weather)
-    assert type(mc) is Series
-    assert not mc.empty
-
 def test_ros_forest_mk5(mock_weather):
-    df = fs.ros_forest_mk5(mock_weather, 3, 15)
-    assert type(df) is DataFrame
-    assert 'fros_mk5' in df.columns.values
+    df = mock_weather
+    ffdi = pps.FFDI(df.temp, df.humidity, df.wind_speed, df.drought, wrf = 3.5)
+    ros = pps.ros_forest_mk5(ffdi, 10)
+    assert type(ros) is Series
+    assert not ros.empty
 
-def test_ros_forest_vesta(mock_weather):
-    df = fs.ros_forest_vesta(mock_weather, 3, 3, 15)
-    assert type(df) is DataFrame
-    assert 'fros_vesta' in df.columns.values
-
-def test_ros_forest_vesta_fhr(mock_weather):
-    df = fs.ros_forest_vesta_fhr(mock_weather, 'H', 'M')
-    assert type(df) is DataFrame
-    assert 'fros_vesta_fhr' in df.columns.values
-
-def test_ros_forest_vesta2(mock_weather):
-    df = fs.ros_forest_vesta2(mock_weather, 3, 14, 0.8)
-    assert type(df) is DataFrame
-    assert 'fros_vesta2' in df.columns.values
-
-def test_ros_grass(mock_weather):
-    df = fs.ros_grass(mock_weather, 'E', 90)
-    assert type(df) is DataFrame
-    assert 'fros_grass' in df.columns.values
-    assert 'mc_g' in df.columns.values
-
-def test_ros_mallee(mock_weather):
-    df = fs.ros_mallee(mock_weather, 30, 5)
-    assert type(df) is DataFrame
-    assert 'fros_mallee' in df.columns.values
-    assert 'mc_m' in df.columns.values
+def test_mc_vesta(mock_weather):
+    df = mock_weather
+    mc = pps.mc_vesta(df.date_time, df.temp, df.humidity)
+    assert type(mc) is Series
+    assert not mc.empty

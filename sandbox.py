@@ -1,5 +1,17 @@
-from src.pyropy.helpers import iwf_to_csv
+import src.pyropy.spreadmodels as pps
+import src.pyropy.helpers as pph
+import src.pyropy.weatherdata as ppw
 
-iwf_fn = r"C:\Users\geoffg\Documents\Incidents\20221205_Stroud_Hill\NSW Special Fire Weather Forecast 13.html"
-csv_fn = r"C:\Users\geoffg\Documents\Incidents\20221205_Stroud_Hill\20221205_Stroud_Hill_IWF.csv"
-csv_fn = iwf_to_csv(iwf_fn, csv_fn)
+def main():
+    logger = pph.get_logger()
+
+    logger.info(f'{logger.name}')
+
+    fn = 'tests/.data/weather_gridded_in.csv'
+    df = ppw.gridded_to_df(fn)
+    df['FFDI'] = pps.get_FFDI(df.temp, df.humidity, df.wind_speed, df.drought, wrf = 3.5)
+
+    logger.info(df.head())
+
+if __name__ == '__main__':
+    main()

@@ -6,9 +6,29 @@ import pandas as pd
 from pandas import DataFrame
 import os
 import warnings
-# from openpyxl import Workbook, load_workbook
+import logging
 
+def get_logger() -> logging.Logger:
+    if __name__ == '__main__': logger_name = 'netCDFs'
+    else: logger_name = Path(__file__).stem
+    logger = logging.getLogger(f'{logger_name}.log')
+    logger.setLevel(logging.DEBUG)
 
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(logging.Formatter('%(message)s'))
+    logger.addHandler(console_handler)
+
+    file_handler = logging.FileHandler(logger.name, mode='w') #overwrite existing log
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(logging.Formatter('%(asctime)s : %(message)s'))
+    logger.addHandler(file_handler)
+
+    logging.getLogger("py.warnings").addHandler(file_handler)
+    logging.captureWarnings(True)
+    logger.debug('started')
+
+    return logger
 
 
 def check_filepath(fn: str, suffix: str = None) -> bool:
